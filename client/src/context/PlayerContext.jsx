@@ -38,6 +38,14 @@ export function PlayerProvider({ children }) {
   const shuffleRef = useRef(false)
   const repeatModeRef = useRef('off')
 
+  const getPlaybackIssue = (song) => {
+    if (!song) return 'Audio playback is unavailable.'
+    if (!song.audioUrl || song.audioReady === false) {
+      return `The audio file for ${song.title} is missing or unavailable.`
+    }
+    return `Unable to play ${song.title}. The audio file may be missing or invalid.`
+  }
+
   useEffect(() => {
     queueRef.current = queue
   }, [queue])
@@ -76,14 +84,15 @@ export function PlayerProvider({ children }) {
         try {
           await audio.play()
           setPlaying(true)
+          setPlaybackError('')
         } catch {
           setPlaying(false)
-          setPlaybackError(`Unable to play ${song.title}. The audio file may be missing or invalid.`)
+          setPlaybackError(getPlaybackIssue(song))
         }
       } else {
         audio.removeAttribute('src')
         setPlaying(false)
-        setPlaybackError(`The audio file for ${song.title} is missing or unavailable.`)
+        setPlaybackError(getPlaybackIssue(song))
       }
     } else {
       setPlaying(true)
@@ -127,6 +136,27 @@ export function PlayerProvider({ children }) {
       setDuration(audio.duration || 0)
     }
 
+    const handlePlay = () => {
+      setPlaybackError('')
+      setPlaying(true)
+    }
+
+    const handlePlaying = () => {
+      setPlaybackError('')
+      setPlaying(true)
+    }
+
+    const handlePause = () => {
+      if (!audio.ended) {
+        setPlaying(false)
+      }
+    }
+
+    const handleError = () => {
+      setPlaybackError(getPlaybackIssue(currentSongRef.current))
+      setPlaying(false)
+    }
+
     const handleEnded = async () => {
       const activeQueue = queueRef.current
       const activeIndex = currentIndexRef.current
@@ -168,11 +198,19 @@ export function PlayerProvider({ children }) {
 
     audio.addEventListener('timeupdate', handleTimeUpdate)
     audio.addEventListener('loadedmetadata', handleLoadedMetadata)
+    audio.addEventListener('play', handlePlay)
+    audio.addEventListener('playing', handlePlaying)
+    audio.addEventListener('pause', handlePause)
+    audio.addEventListener('error', handleError)
     audio.addEventListener('ended', handleEnded)
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate)
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
+      audio.removeEventListener('play', handlePlay)
+      audio.removeEventListener('playing', handlePlaying)
+      audio.removeEventListener('pause', handlePause)
+      audio.removeEventListener('error', handleError)
       audio.removeEventListener('ended', handleEnded)
     }
   }, [])
@@ -235,7 +273,7 @@ export function PlayerProvider({ children }) {
       }
 
       if (!audio || !song.audioUrl || song.audioReady === false) {
-        setPlaybackError(`The audio file for ${song.title} is missing or unavailable.`)
+        setPlaybackError(getPlaybackIssue(song))
         setPlaying(false)
         return
       }
@@ -250,7 +288,7 @@ export function PlayerProvider({ children }) {
           setPlaybackError('')
         } catch {
           setPlaying(false)
-          setPlaybackError(`Unable to play ${song.title}. The audio file may be missing or invalid.`)
+          setPlaybackError(getPlaybackIssue(song))
         }
       }
 
@@ -265,7 +303,7 @@ export function PlayerProvider({ children }) {
 
     const audio = audioRef.current
     if (!audio || !currentSong.audioUrl || currentSong.audioReady === false) {
-      setPlaybackError(`The audio file for ${currentSong.title} is missing or unavailable.`)
+      setPlaybackError(getPlaybackIssue(currentSong))
       setPlaying(false)
       return
     }
@@ -282,7 +320,7 @@ export function PlayerProvider({ children }) {
       setPlaybackError('')
     } catch {
       setPlaying(false)
-      setPlaybackError(`Unable to play ${currentSong.title}. The audio file may be missing or invalid.`)
+      setPlaybackError(getPlaybackIssue(currentSong))
     }
   }
 
