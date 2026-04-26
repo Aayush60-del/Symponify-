@@ -169,7 +169,7 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
   const location = useLocation()
   const [showNotifications, setShowNotifications] = useState(false)
   const [searchValue, setSearchValue] = useState('')
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isXs, isMobile, isTabletOrBelow } = useViewport()
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -192,13 +192,14 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
     },
     title: {
       ...styles.title,
-      fontSize: isMobile ? '24px' : styles.title.fontSize,
+      fontSize: isXs ? '21px' : isMobile ? '24px' : styles.title.fontSize,
     },
     right: {
       ...styles.right,
       width: isTabletOrBelow ? '100%' : 'auto',
       flexWrap: isMobile ? 'wrap' : 'nowrap',
       justifyContent: isTabletOrBelow ? 'space-between' : 'flex-start',
+      gap: isMobile ? '10px' : styles.right.gap,
     },
     search: {
       ...styles.search,
@@ -222,7 +223,7 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
       <header style={computedStyles.bar}>
         <div style={{ ...styles.titleWrap, flex: isTabletOrBelow ? '1 1 auto' : '0 0 auto', minWidth: 0 }}>
           {showMenuButton ? (
-            <button type="button" style={{ ...styles.iconBtn, marginBottom: '10px' }} aria-label="Open navigation menu" onClick={onMenuToggle}>
+            <button type="button" style={{ ...styles.iconBtn, marginBottom: '10px', width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Open navigation menu" onClick={onMenuToggle}>
               <FiMenu />
             </button>
           ) : null}
@@ -244,10 +245,10 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
               }}
             />
           </div>
-          <button type="button" style={styles.iconBtn} aria-label="Run search" onClick={submitSearch}>
+          <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Run search" onClick={submitSearch}>
             <FiSearch />
           </button>
-          <button type="button" style={styles.iconBtn} aria-label="Notifications" onClick={() => setShowNotifications(true)}>
+          <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Notifications" onClick={() => setShowNotifications(true)}>
             <FiBell />
             <span style={styles.dot} />
           </button>

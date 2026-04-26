@@ -87,7 +87,7 @@ const styles = {
 export default function Home() {
   const navigate = useNavigate()
   const { playSong } = usePlayer()
-  const { isMobile, isTabletOrBelow, isCompact } = useViewport()
+  const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
   const [selectedAlbum, setSelectedAlbum] = useState('')
@@ -128,7 +128,7 @@ export default function Home() {
   }
 
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
       <section style={styles.section}>
         <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center' }}>
           <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '20px' : styles.sectionTitle.fontSize }}>Featured</h2>
@@ -157,9 +157,9 @@ export default function Home() {
         {albums.length ? (
           <>
             <p style={styles.helper}>
-              {selectedAlbum ? `${selectedAlbum} selected. Click again to clear the filter.` : 'Album par click karo aur niche us album ke songs dekho.'}
+              {selectedAlbum ? `${selectedAlbum} selected. Click again to clear the filter.` : 'Select an album to view its songs below.'}
             </p>
-            <div style={{ ...styles.albumRow, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : '144px'}, 1fr))` }}>
+            <div style={{ ...styles.albumRow, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
               {albums.map((album, index) => (
                 <AlbumCard
                   key={`${album.title}-${index}`}
@@ -171,7 +171,7 @@ export default function Home() {
             </div>
           </>
         ) : (
-          <div style={styles.empty}>Abhi recommended albums available nahi hain. Pehle real songs upload karo, fir yahan albums dikhne lagenge.</div>
+          <div style={styles.empty}>No recommended albums are available yet. Upload songs to start seeing albums here.</div>
         )}
       </section>
 
@@ -188,7 +188,7 @@ export default function Home() {
           ))
         ) : (
           <div style={styles.empty}>
-            {selectedAlbum ? `Is album ke liye abhi koi song nahi mila.` : 'Abhi library me real songs nahi hain. Add Song page se upload karne ke baad ye list bhar jayegi.'}
+            {selectedAlbum ? 'No songs were found for this album yet.' : 'Your library is empty right now. Upload songs from the Add Song page to fill this list.'}
           </div>
         )}
       </section>

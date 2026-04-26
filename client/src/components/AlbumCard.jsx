@@ -3,7 +3,7 @@ import useViewport from '../hooks/useViewport'
 
 export default function AlbumCard({ album, onSelect, active = false }) {
   const { playTrack } = usePlayer()
-  const { isMobile } = useViewport()
+  const { isMobile, isWide } = useViewport()
   const hasCover = Boolean(album.coverUrl)
 
   const handleClick = () => {
@@ -23,13 +23,13 @@ export default function AlbumCard({ album, onSelect, active = false }) {
   }
 
   return (
-    <button type="button" style={{ ...styles.card, opacity: active ? 1 : 0.96, padding: isMobile ? '2px' : 0 }} onClick={handleClick}>
+    <button type="button" style={{ ...styles.card, opacity: active ? 1 : 0.96, padding: isMobile ? '2px' : 0, gap: isWide ? '0.5rem' : styles.card.gap }} onClick={handleClick}>
       <div
         style={{
           ...styles.art,
           background: hasCover ? 'var(--surface-2)' : album.color || 'linear-gradient(135deg, #333, #666)',
           outline: active ? '3px solid rgba(255, 92, 53, 0.28)' : 'none',
-          fontSize: isMobile ? '34px' : styles.art.fontSize,
+          fontSize: isMobile ? '34px' : isWide ? '46px' : styles.art.fontSize,
         }}
       >
         {hasCover ? <img src={album.coverUrl} alt={`${album.title} cover`} style={styles.image} /> : album.emoji || '🎵'}
@@ -47,6 +47,8 @@ const styles = {
     textAlign: 'left',
     background: 'transparent',
     cursor: 'pointer',
+    display: 'grid',
+    gap: '0.35rem',
   },
   art: {
     width: '100%',

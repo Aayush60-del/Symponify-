@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
 import { usePlayer } from '../context/PlayerContext'
+import useViewport from '../hooks/useViewport'
 
 const initialForm = {
   title: '',
@@ -288,21 +289,10 @@ export default function AddSong() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState({ text: '', type: '' })
-  const [viewportWidth, setViewportWidth] = useState(() => (typeof window === 'undefined' ? 1280 : window.innerWidth))
   const audioRef = useRef(null)
   const coverRef = useRef(null)
-
-  const isCompact = viewportWidth < 960
-  const isPhone = viewportWidth < 640
+  const { isCompact, isMobile: isPhone, isWide } = useViewport()
   const preselectedAlbum = searchParams.get('album') || ''
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return undefined
-
-    const handleResize = () => setViewportWidth(window.innerWidth)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   useEffect(() => {
     axios
@@ -364,7 +354,7 @@ export default function AddSong() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.size) {
-      setMessage({ text: 'Empty audio file select hui hai. Valid mp3/wav file choose karo.', type: 'error' })
+      setMessage({ text: 'The selected audio file is empty. Choose a valid MP3 or WAV file.', type: 'error' })
       if (audioRef.current) audioRef.current.value = ''
       return
     }
@@ -386,7 +376,7 @@ export default function AddSong() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.size) {
-      setMessage({ text: 'Empty cover file select hui hai. Valid image choose karo.', type: 'error' })
+      setMessage({ text: 'The selected cover image is empty. Choose a valid image file.', type: 'error' })
       if (coverRef.current) coverRef.current.value = ''
       return
     }
@@ -402,12 +392,12 @@ export default function AddSong() {
 
   const submit = async () => {
     if (!form.title.trim() || !form.artist.trim()) {
-      setMessage({ text: 'Title aur artist zaroori hain.', type: 'error' })
+      setMessage({ text: 'Title and artist are required.', type: 'error' })
       return
     }
 
     if (!audioFile) {
-      setMessage({ text: 'Audio file select karo.', type: 'error' })
+      setMessage({ text: 'Please select an audio file.', type: 'error' })
       return
     }
 
@@ -445,7 +435,7 @@ export default function AddSong() {
       })
 
       resetForm()
-      setMessage({ text: 'Song successfully upload ho gaya.', type: 'success' })
+      setMessage({ text: 'Song uploaded successfully.', type: 'success' })
     } catch (error) {
       setMessage({
         text: `Upload failed: ${error.response?.data?.message || error.message}`,
@@ -462,7 +452,7 @@ export default function AddSong() {
         <section style={styles.hero}>
           <div style={styles.eyebrow}>Admin Tools</div>
           <h1 style={styles.title}>Admin access only</h1>
-          <p style={styles.copy}>Add Song page sirf admin users ke liye available hai. Account ko admin banane ke baad dobara login karo.</p>
+          <p style={styles.copy}>The Add Song page is available only to admin users. Sign in again after your account has been granted admin access.</p>
         </section>
       </div>
     )
@@ -473,6 +463,9 @@ export default function AddSong() {
       style={{
         ...styles.page,
         padding: isPhone ? '16px' : isCompact ? '22px' : styles.page.padding,
+        width: '100%',
+        maxWidth: isWide ? '1320px' : '100%',
+        marginInline: 'auto',
       }}
       className="scrollbar-hidden"
     >
@@ -496,6 +489,7 @@ export default function AddSong() {
           ...styles.card,
           padding: isPhone ? '20px' : styles.card.padding,
           borderRadius: isPhone ? '24px' : styles.card.borderRadius,
+          width: '100%',
         }}
       >
         <h2 style={styles.heading}>Add New Song</h2>

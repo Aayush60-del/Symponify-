@@ -17,10 +17,10 @@ const baseCardStyle = (item, clickable) => ({
 })
 
 export default function FeaturedCard({ item, onAction }) {
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isMobile, isTabletOrBelow, isWide } = useViewport()
   const cardStyle = {
     ...baseCardStyle(item, Boolean(onAction) && !item.large),
-    minHeight: item.large ? (isMobile ? '220px' : '240px') : isMobile ? '104px' : '114px',
+    minHeight: item.large ? (isMobile ? '220px' : isWide ? '280px' : '240px') : isMobile ? '104px' : '114px',
     borderRadius: isTabletOrBelow ? '22px' : item.large ? '28px' : '20px',
     padding: item.large ? (isMobile ? '20px' : '28px') : isMobile ? '16px' : '18px',
   }
@@ -44,7 +44,7 @@ export default function FeaturedCard({ item, onAction }) {
             {item.badge}
           </span>
         ) : null}
-        <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
+        <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : isWide ? '40px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
         <p style={{ maxWidth: '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0 }}>
           {item.description}
         </p>
@@ -70,7 +70,7 @@ export default function FeaturedCard({ item, onAction }) {
           {item.badge}
         </span>
       ) : null}
-      <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
+      <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : isWide ? '40px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
       <p style={{ maxWidth: '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0 }}>
         {item.description}
       </p>

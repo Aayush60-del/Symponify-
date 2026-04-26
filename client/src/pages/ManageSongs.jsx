@@ -279,7 +279,7 @@ const albumCountLabel = (count) => `${count} ${count === 1 ? 'song' : 'songs'}`
 export default function ManageSongs() {
   const { user } = usePlayer()
   const navigate = useNavigate()
-  const { isMobile, isTabletOrBelow, isCompact } = useViewport()
+  const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
   const [selectedAlbum, setSelectedAlbum] = useState('')
@@ -382,7 +382,7 @@ export default function ManageSongs() {
   const createAlbum = async () => {
     const title = createAlbumForm.title.trim()
     if (!title) {
-      setMessage({ text: 'Album name required hai.', type: 'error' })
+      setMessage({ text: 'Album name is required.', type: 'error' })
       return
     }
 
@@ -401,7 +401,7 @@ export default function ManageSongs() {
 
       setCreateAlbumForm(emptyAlbumForm)
       await loadData(data.album.title)
-      setMessage({ text: 'Album create ho gaya. Ab isme songs aur cover baad me add kar sakte ho.', type: 'success' })
+      setMessage({ text: 'Album created successfully. You can add songs and a cover later.', type: 'success' })
     } catch (error) {
       setMessage({ text: error.response?.data?.message || 'Album create failed', type: 'error' })
     } finally {
@@ -460,7 +460,7 @@ export default function ManageSongs() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.size) {
-      setMessage({ text: 'Empty file upload nahi ho sakti. Valid media choose karo.', type: 'error' })
+      setMessage({ text: 'The selected file is empty. Choose a valid media file.', type: 'error' })
       event.target.value = ''
       return
     }
@@ -478,7 +478,7 @@ export default function ManageSongs() {
       })
 
       await loadData(selectedAlbum)
-      setMessage({ text: field === 'audio' ? 'Song audio replace ho gaya.' : 'Song cover replace ho gaya.', type: 'success' })
+      setMessage({ text: field === 'audio' ? 'Song audio replaced successfully.' : 'Song cover replaced successfully.', type: 'success' })
     } catch (error) {
       setMessage({ text: error.response?.data?.message || 'Media update failed', type: 'error' })
     } finally {
@@ -493,18 +493,18 @@ export default function ManageSongs() {
         <section style={styles.hero}>
           <div style={styles.eyebrow}>Admin Tools</div>
           <h1 style={styles.title}>Admin access only</h1>
-          <p style={styles.copy}>Manage Songs page sirf admin ke liye available hai.</p>
+          <p style={styles.copy}>The Manage Songs page is available only to admins.</p>
         </section>
       </div>
     )
   }
 
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
       <section style={{ ...styles.hero, padding: isMobile ? '20px' : styles.hero.padding }}>
         <div style={styles.eyebrow}>Admin Tools</div>
         <h1 style={{ ...styles.title, fontSize: isMobile ? '28px' : styles.title.fontSize }}>Manage Songs</h1>
-        <p style={styles.copy}>Album yahin create karo, cover baad me update karo, aur selected album me direct song add karne ke liye shortcut use karo.</p>
+        <p style={styles.copy}>Create albums here, update covers later, and use the shortcut to add songs directly to the selected album.</p>
       </section>
 
       {message.text ? (
@@ -520,7 +520,7 @@ export default function ManageSongs() {
         </div>
       ) : null}
 
-      <div style={{ ...styles.layout, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.layout.gridTemplateColumns }}>
+      <div style={{ ...styles.layout, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : isWide ? '360px minmax(0, 1fr)' : styles.layout.gridTemplateColumns }}>
         <section style={styles.albumsCard}>
           <h2 style={styles.sectionTitle}>Albums</h2>
 
@@ -575,7 +575,7 @@ export default function ManageSongs() {
               ))}
             </div>
           ) : (
-            <div style={styles.empty}>Abhi koi album available nahi hai.</div>
+            <div style={styles.empty}>No albums are available yet.</div>
           )}
         </section>
 
@@ -584,7 +584,7 @@ export default function ManageSongs() {
             <div>
               <div style={styles.songsTitle}>{selectedAlbum || 'Select an album'}</div>
               <div style={styles.songsMeta}>
-                {selectedAlbumData ? `${albumCountLabel(selectedAlbumData.songCount || 0)} available for management` : 'Album choose karo ya naya album create karo.'}
+                {selectedAlbumData ? `${albumCountLabel(selectedAlbumData.songCount || 0)} available for management` : 'Select an album or create a new one to get started.'}
               </div>
             </div>
             {selectedAlbum ? (
@@ -612,7 +612,7 @@ export default function ManageSongs() {
                   <div>
                     <div style={styles.songName}>{selectedAlbum}</div>
                     <div style={styles.songSub}>
-                      {selectedAlbumCover ? 'Current album cover' : 'Abhi cover add nahi hua. Change Cover se baad me upload kar sakte ho.'}
+                      {selectedAlbumCover ? 'Current album cover' : 'No cover has been added yet. Use Change Cover to upload one later.'}
                     </div>
                   </div>
                 </div>
@@ -655,7 +655,7 @@ export default function ManageSongs() {
                           {!song.audioReady ? (
                             <div style={{ ...styles.songSub, color: '#c54d2b' }}>
                               <FiAlertCircle style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                              Audio file missing ya broken hai
+                              Audio file is missing or unavailable
                             </div>
                           ) : null}
                         </div>
@@ -726,10 +726,10 @@ export default function ManageSongs() {
                 })}
               </div>
             ) : (
-              <div style={styles.empty}>Is album me abhi songs nahi hain. `Add Song` se is album me tracks add kar do, aur `Change Cover` se cover baad me upload kar sakte ho.</div>
+              <div style={styles.empty}>This album does not have any songs yet. Use `Add Song` to add tracks and `Change Cover` to upload artwork later.</div>
             )
           ) : (
-            <div style={styles.empty}>Left side se album select karo ya naya album create karo. Uske baad yahin se rename, cover update, aur song management sab ho jayega.</div>
+            <div style={styles.empty}>Select an album from the left or create a new one. After that, you can rename it, update the cover, and manage songs here.</div>
           )}
         </section>
       </div>
@@ -740,7 +740,7 @@ export default function ManageSongs() {
           <div style={styles.modal}>
             <div style={styles.modalTitle}>Delete Song?</div>
             <p style={styles.modalCopy}>
-              `{songPendingDelete.title}` ko permanently remove karna hai? Ye action baad me undo nahi hoga.
+              Are you sure you want to permanently remove `{songPendingDelete.title}`? This action cannot be undone.
             </p>
             <div style={styles.modalActions}>
               <button type="button" style={styles.controlButton} onClick={() => setSongPendingDelete(null)}>

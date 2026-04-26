@@ -27,6 +27,10 @@
   --font: 'DM Sans', sans-serif;
   --mono: 'Space Mono', monospace;
   --serif: 'DM Serif Display', serif;
+  --page-max: 1600px;
+  --page-pad: clamp(0.9rem, 1.8vw, 1.5rem);
+  --section-pad: clamp(1rem, 2.2vw, 1.75rem);
+  --card-radius: clamp(1.1rem, 2.5vw, 2rem);
 }
 
 html,
@@ -34,6 +38,11 @@ body,
 #root {
   width: 100%;
   min-height: 100%;
+}
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -44,6 +53,8 @@ body {
     radial-gradient(circle at top right, rgba(240, 165, 0, 0.12), transparent 24%),
     linear-gradient(180deg, #faf8f2 0%, var(--bg) 55%);
   overflow-x: hidden;
+  font-size: clamp(0.95rem, 0.3vw + 0.9rem, 1rem);
+  line-height: 1.5;
 }
 
 button,
@@ -55,12 +66,14 @@ textarea {
 
 button {
   border: 0;
+  min-height: 44px;
 }
 
 input,
 select,
 textarea {
   font-size: 16px;
+  min-height: 44px;
 }
 
 a {
@@ -85,9 +98,34 @@ textarea {
   max-width: 100%;
 }
 
+input,
+select,
+textarea {
+  width: 100%;
+}
+
 button,
 [role='button'] {
   touch-action: manipulation;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+button,
+input,
+select,
+textarea {
+  overflow-wrap: anywhere;
+}
+
+.app-shell {
+  width: min(100%, var(--page-max));
+  margin-inline: auto;
 }
 
 .scrollbar-hidden::-webkit-scrollbar {
@@ -102,5 +140,7 @@ button,
   :root {
     --radius: 20px;
     --radius-sm: 12px;
+    --page-pad: 1rem;
+    --section-pad: 1rem;
   }
 }

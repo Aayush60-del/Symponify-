@@ -68,7 +68,7 @@ const styles = {
 }
 
 export default function Library() {
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isMobile, isTabletOrBelow, isWide } = useViewport()
   const [activeTab, setActiveTab] = useState('Albums')
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
@@ -111,7 +111,7 @@ export default function Library() {
   }, [activeTab, albums, artistItems])
 
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
       <div style={styles.tabs}>
         {tabs.map((tab) => (
           <button
@@ -138,13 +138,13 @@ export default function Library() {
       </section>
 
       {items.length ? (
-        <div style={{ ...styles.grid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : '144px'}, 1fr))` }}>
+        <div style={{ ...styles.grid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
           {items.map((item, index) => (
             <AlbumCard key={`${item.title}-${index}`} album={item} />
           ))}
         </div>
       ) : (
-        <div style={styles.empty}>Abhi is section ke liye real data available nahi hai.</div>
+        <div style={styles.empty}>No data is available for this section yet.</div>
       )}
     </div>
   )

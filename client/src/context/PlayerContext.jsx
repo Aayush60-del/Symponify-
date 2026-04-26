@@ -78,12 +78,12 @@ export function PlayerProvider({ children }) {
           setPlaying(true)
         } catch {
           setPlaying(false)
-          setPlaybackError(`${song.title} ka audio play nahi ho pa raha. File missing ya invalid ho sakti hai.`)
+          setPlaybackError(`Unable to play ${song.title}. The audio file may be missing or invalid.`)
         }
       } else {
         audio.removeAttribute('src')
         setPlaying(false)
-        setPlaybackError(`${song.title} ke liye audio file missing ya broken hai.`)
+        setPlaybackError(`The audio file for ${song.title} is missing or unavailable.`)
       }
     } else {
       setPlaying(true)
@@ -235,7 +235,7 @@ export function PlayerProvider({ children }) {
       }
 
       if (!audio || !song.audioUrl || song.audioReady === false) {
-        setPlaybackError(`${song.title} ke liye audio file missing ya broken hai.`)
+        setPlaybackError(`The audio file for ${song.title} is missing or unavailable.`)
         setPlaying(false)
         return
       }
@@ -250,7 +250,7 @@ export function PlayerProvider({ children }) {
           setPlaybackError('')
         } catch {
           setPlaying(false)
-          setPlaybackError(`${song.title} ka audio play nahi ho pa raha. File missing ya invalid ho sakti hai.`)
+          setPlaybackError(`Unable to play ${song.title}. The audio file may be missing or invalid.`)
         }
       }
 
@@ -265,7 +265,7 @@ export function PlayerProvider({ children }) {
 
     const audio = audioRef.current
     if (!audio || !currentSong.audioUrl || currentSong.audioReady === false) {
-      setPlaybackError(`${currentSong.title} ke liye audio file missing ya broken hai.`)
+      setPlaybackError(`The audio file for ${currentSong.title} is missing or unavailable.`)
       setPlaying(false)
       return
     }
@@ -282,7 +282,7 @@ export function PlayerProvider({ children }) {
       setPlaybackError('')
     } catch {
       setPlaying(false)
-      setPlaybackError(`${currentSong.title} ka audio play nahi ho pa raha. File missing ya invalid ho sakti hai.`)
+      setPlaybackError(`Unable to play ${currentSong.title}. The audio file may be missing or invalid.`)
     }
   }
 

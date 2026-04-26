@@ -6,7 +6,7 @@ import Sidebar from './Sidebar'
 import useViewport from '../hooks/useViewport'
 
 export default function MainLayout() {
-  const { isCompact, isTabletOrBelow } = useViewport()
+  const { isCompact, isTabletOrBelow, isWide } = useViewport()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
@@ -19,11 +19,13 @@ export default function MainLayout() {
     shell: {
       display: isCompact ? 'flex' : 'grid',
       flexDirection: isCompact ? 'column' : undefined,
-      gridTemplateColumns: isCompact ? undefined : '280px minmax(0, 1fr)',
+      gridTemplateColumns: isCompact ? undefined : isWide ? '320px minmax(0, 1fr)' : '280px minmax(0, 1fr)',
       gridTemplateRows: isCompact ? undefined : '1fr auto',
       gap: isCompact ? '12px' : '18px',
       minHeight: '100dvh',
-      padding: isTabletOrBelow ? '12px' : '18px',
+      padding: 'var(--page-pad)',
+      width: 'min(100%, var(--page-max))',
+      marginInline: 'auto',
     },
     mainPanel: {
       minHeight: 0,
@@ -41,6 +43,7 @@ export default function MainLayout() {
       borderRadius: isTabletOrBelow ? '24px' : '32px',
       boxShadow: 'var(--shadow)',
       overflow: 'hidden',
+      width: '100%',
     },
     overlay: {
       position: 'fixed',
@@ -51,7 +54,7 @@ export default function MainLayout() {
   }
 
   return (
-    <div style={layoutStyles.shell}>
+    <div style={layoutStyles.shell} className="app-shell">
       {isCompact && isSidebarOpen ? <button type="button" aria-label="Close navigation menu" style={layoutStyles.overlay} onClick={() => setIsSidebarOpen(false)} /> : null}
       <Sidebar isCompact={isCompact} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div style={layoutStyles.mainPanel}>

@@ -100,7 +100,7 @@ const styles = {
 export default function Sidebar({ isCompact = false, isOpen = false, onClose }) {
   const navigate = useNavigate()
   const { user } = usePlayer()
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
   const links = [
     { to: '/', label: 'Home', icon: FiGrid, end: true },
@@ -124,7 +124,6 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     top: isCompact ? '12px' : 'auto',
     left: isCompact ? '12px' : 'auto',
     bottom: isCompact ? '12px' : 'auto',
-    width: isCompact ? 'min(320px, calc(100vw - 24px))' : 'auto',
     maxWidth: isCompact ? '100%' : 'none',
     transform: isCompact ? `translateX(${isOpen ? '0' : '-120%'})` : 'none',
     transition: 'transform 0.25s ease',
@@ -132,6 +131,9 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     overflowY: 'auto',
     padding: isTabletOrBelow ? '20px 18px' : styles.sidebar.padding,
     borderRadius: isTabletOrBelow ? '24px' : styles.sidebar.borderRadius,
+    minHeight: isCompact ? 'calc(100dvh - 24px)' : '100%',
+    maxHeight: isCompact ? 'calc(100dvh - 24px)' : 'none',
+    width: isCompact ? 'min(320px, calc(100vw - 24px))' : isWide ? '320px' : 'auto',
   }
 
   return (

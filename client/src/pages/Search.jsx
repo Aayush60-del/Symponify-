@@ -87,7 +87,7 @@ const styles = {
 
 export default function Search() {
   const { playSong } = usePlayer()
-  const { isMobile, isTabletOrBelow, isCompact } = useViewport()
+  const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(() => searchParams.get('q') || '')
   const [genre, setGenre] = useState(() => searchParams.get('genre') || 'All')
@@ -144,7 +144,7 @@ export default function Search() {
   }
 
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
       <div style={{ ...styles.top, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.top.gridTemplateColumns }}>
         <section style={{ ...styles.searchBox, padding: isMobile ? '16px' : styles.searchBox.padding }}>
           <input
@@ -192,7 +192,7 @@ export default function Search() {
 
       <section>
         <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Albums</h2>
-        <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : '144px'}, 1fr))` }}>
+        <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
           {albums.map((album, index) => (
             <AlbumCard key={`${album.title}-${index}`} album={album} />
           ))}

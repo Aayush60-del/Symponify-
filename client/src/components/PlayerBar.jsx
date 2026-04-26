@@ -138,7 +138,7 @@ const styles = {
 }
 
 export default function PlayerBar() {
-  const { isCompact, isTabletOrBelow } = useViewport()
+  const { isCompact, isMobile, isTabletOrBelow } = useViewport()
   const { currentTrack, isPlaying, liked, shuffle, repeatMode, progress, progressPercent, duration, durationLabel, playbackError, seek, setVolume, toggleLike, togglePlay, playNext, playPrevious, toggleShuffle, cycleRepeatMode } = usePlayer()
   const progressTrackRef = useRef(null)
   const [dragPercent, setDragPercent] = useState(null)
@@ -204,6 +204,7 @@ export default function PlayerBar() {
       ...styles.left,
       justifyContent: isTabletOrBelow ? 'space-between' : 'flex-start',
       gap: isTabletOrBelow ? '12px' : styles.left.gap,
+      flexWrap: isMobile ? 'wrap' : 'nowrap',
     },
     center: {
       ...styles.center,
@@ -223,6 +224,7 @@ export default function PlayerBar() {
       ...styles.right,
       justifyContent: isCompact ? 'space-between' : styles.right.justifyContent,
       width: isCompact ? '100%' : 'auto',
+      flexWrap: isMobile ? 'wrap' : 'nowrap',
     },
     leftMeta: {
       minWidth: 0,
@@ -246,7 +248,7 @@ export default function PlayerBar() {
           <div style={styles.artist}>{track.artist}</div>
           {playbackError ? <div style={{ ...styles.artist, color: '#c54d2b' }}>{playbackError}</div> : null}
         </div>
-        <button style={styles.iconButton} onClick={() => toggleLike(track)} aria-label="Like current track">
+        <button style={{ ...styles.iconButton, width: isMobile ? '40px' : styles.iconButton.width, height: isMobile ? '40px' : styles.iconButton.height }} onClick={() => toggleLike(track)} aria-label="Like current track">
           <FiHeart fill={liked ? 'currentColor' : 'none'} />
         </button>
       </div>
@@ -288,7 +290,7 @@ export default function PlayerBar() {
       </div>
 
       <div style={computedStyles.right}>
-        <FiVolume2 color="var(--text-2)" />
+        <FiVolume2 color="var(--text-2)" style={{ flexShrink: 0 }} />
         <input type="range" min="0" max="100" defaultValue="70" style={computedStyles.volume} onChange={(event) => setVolume(Number(event.target.value))} />
       </div>
     </footer>

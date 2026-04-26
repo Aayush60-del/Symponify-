@@ -4,7 +4,7 @@ import useViewport from '../hooks/useViewport'
 
 export default function SongRow({ song, index, onPlay }) {
   const { currentTrack, isLiked, isPlaying, playSong, toggleLike } = usePlayer()
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isXs, isMobile, isTabletOrBelow } = useViewport()
   const active = currentTrack?._id === song._id
   const liked = isLiked(song._id)
   const hasCover = Boolean(song.coverUrl)
@@ -12,11 +12,11 @@ export default function SongRow({ song, index, onPlay }) {
   const rowStyle = {
     ...styles.row,
     background: active ? 'rgba(255, 92, 53, 0.08)' : 'rgba(255,255,255,0.74)',
-    gridTemplateColumns: isMobile ? '52px minmax(0, 1fr) 40px' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px' : styles.row.gridTemplateColumns,
+    gridTemplateColumns: isMobile ? '48px minmax(0, 1fr) 40px' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px' : styles.row.gridTemplateColumns,
     gridTemplateRows: isMobile ? 'auto auto' : 'auto',
     gap: isMobile ? '10px 12px' : styles.row.gap,
     alignItems: isMobile ? 'start' : styles.row.alignItems,
-    padding: isMobile ? '12px' : styles.row.padding,
+    padding: isXs ? '10px' : isMobile ? '12px' : styles.row.padding,
   }
 
   return (
@@ -27,7 +27,7 @@ export default function SongRow({ song, index, onPlay }) {
       </div>
       <div style={{ ...styles.info, gridColumn: isMobile ? '2 / 3' : 'auto' }}>
         <div style={{ ...styles.title, color: active ? 'var(--accent)' : 'var(--text)' }}>{song.title}</div>
-        <div style={styles.sub}>{song.subtitle || `${song.artist} - ${song.duration || '3:20'}`}</div>
+        <div style={{ ...styles.sub, whiteSpace: isMobile ? 'normal' : styles.sub.whiteSpace }}>{song.subtitle || `${song.artist} - ${song.duration || '3:20'}`}</div>
       </div>
       <div style={{ ...styles.meta, gridColumn: isMobile ? '2 / 3' : 'auto', justifySelf: isMobile ? 'start' : styles.meta.justifySelf }}>
         {song.duration || song.genre || '3:20'}

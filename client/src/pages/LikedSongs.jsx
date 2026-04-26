@@ -68,10 +68,10 @@ const styles = {
 
 export default function LikedSongs() {
   const { likedSongs } = usePlayer()
-  const { isMobile, isTabletOrBelow } = useViewport()
+  const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1320px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
       <section style={{ ...styles.header, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', padding: isMobile ? '20px' : styles.header.padding, borderRadius: isMobile ? '24px' : styles.header.borderRadius }}>
         <div style={{ ...styles.iconWrap, width: isMobile ? '64px' : styles.iconWrap.width, height: isMobile ? '64px' : styles.iconWrap.height }}>
           <FiHeart size={isMobile ? 26 : 32} />

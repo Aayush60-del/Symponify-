@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import useViewport from '../hooks/useViewport'
 
 const styles = {
   page: {
@@ -163,6 +164,7 @@ export default function Login() {
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
   const handleAuthSuccess = (data, nextPath = '/') => {
     localStorage.setItem('token', data.token)
@@ -204,20 +206,26 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.page}>
-      <div style={styles.wrap}>
-        <section style={styles.hero}>
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : '24px' }}>
+      <div
+        style={{
+          ...styles.wrap,
+          gridTemplateColumns: isTabletOrBelow ? 'minmax(0, 1fr)' : styles.wrap.gridTemplateColumns,
+          gap: isMobile ? '16px' : isWide ? '28px' : styles.wrap.gap,
+        }}
+      >
+        <section style={{ ...styles.hero, minHeight: isTabletOrBelow ? 'auto' : styles.hero.minHeight, padding: isMobile ? '24px' : styles.hero.padding, borderRadius: isMobile ? '28px' : styles.hero.borderRadius }}>
           <div>
             <div style={styles.logo}>
               <span style={styles.dot} />
               Symponify
             </div>
-            <h1 style={styles.heroTitle}>A music room with calm energy.</h1>
+            <h1 style={{ ...styles.heroTitle, fontSize: isMobile ? '38px' : isTabletOrBelow ? '46px' : styles.heroTitle.fontSize }}>A music room with calm energy.</h1>
             <p style={styles.heroCopy}>
               Keep your favorite records, discover textured playlists, and move through your library with a warm minimal interface.
             </p>
           </div>
-          <div style={styles.metrics}>
+          <div style={{ ...styles.metrics, gridTemplateColumns: isMobile ? '1fr' : styles.metrics.gridTemplateColumns }}>
             <div style={styles.metricCard}>
               <div style={styles.metricNum}>24/7</div>
               <div style={styles.metricLabel}>always-on personal listening</div>
@@ -233,7 +241,7 @@ export default function Login() {
           </div>
         </section>
 
-        <section style={styles.card}>
+        <section style={{ ...styles.card, padding: isMobile ? '24px' : styles.card.padding, borderRadius: isMobile ? '28px' : styles.card.borderRadius }}>
           <div style={styles.logo}>
             <span style={styles.dot} />
             Symponify
@@ -302,7 +310,7 @@ export default function Login() {
           <button style={styles.secondaryButton} onClick={openAdminAccess}>
             Admin Access
           </button>
-          <p style={styles.hint}>Admin page sirf approved admin email aur password se sign in karne par hi khulega.</p>
+          <p style={styles.hint}>Admin access is available only for approved admin accounts.</p>
         </section>
       </div>
     </div>
