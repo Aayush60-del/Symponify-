@@ -1,0 +1,85 @@
+import { usePlayer } from '../context/PlayerContext'
+import useViewport from '../hooks/useViewport'
+
+export default function AlbumCard({ album, onSelect, active = false }) {
+  const { playTrack } = usePlayer()
+  const { isMobile } = useViewport()
+  const hasCover = Boolean(album.coverUrl)
+
+  const handleClick = () => {
+    if (onSelect) {
+      onSelect(album)
+      return
+    }
+
+    playTrack({
+      title: album.title,
+      artist: album.artist || 'Symponify Radio',
+      album: album.title,
+      emoji: album.emoji || '🎵',
+      color: album.color,
+      coverUrl: album.coverUrl,
+    })
+  }
+
+  return (
+    <button type="button" style={{ ...styles.card, opacity: active ? 1 : 0.96, padding: isMobile ? '2px' : 0 }} onClick={handleClick}>
+      <div
+        style={{
+          ...styles.art,
+          background: hasCover ? 'var(--surface-2)' : album.color || 'linear-gradient(135deg, #333, #666)',
+          outline: active ? '3px solid rgba(255, 92, 53, 0.28)' : 'none',
+          fontSize: isMobile ? '34px' : styles.art.fontSize,
+        }}
+      >
+        {hasCover ? <img src={album.coverUrl} alt={`${album.title} cover`} style={styles.image} /> : album.emoji || '🎵'}
+      </div>
+      <div style={styles.title}>{album.title}</div>
+      <div style={styles.artist}>{album.artist || 'Symponify Radio'}</div>
+    </button>
+  )
+}
+
+const styles = {
+  card: {
+    width: '100%',
+    minWidth: 0,
+    textAlign: 'left',
+    background: 'transparent',
+    cursor: 'pointer',
+  },
+  art: {
+    width: '100%',
+    aspectRatio: '1 / 1',
+    borderRadius: '20px',
+    display: 'grid',
+    placeItems: 'center',
+    fontSize: '42px',
+    marginBottom: '12px',
+    boxShadow: '0 10px 28px rgba(0,0,0,0.12)',
+    overflow: 'hidden',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center',
+    display: 'block',
+  },
+  title: {
+    fontSize: '14px',
+    fontWeight: 700,
+    color: 'var(--text)',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  artist: {
+    fontSize: '12px',
+    color: 'var(--text-3)',
+    marginTop: '4px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+}

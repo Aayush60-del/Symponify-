@@ -1,0 +1,74 @@
+
+> aura-music-client@0.0.0 dev
+> vite --host 127.0.0.1
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m754[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+[2m6:26:14 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SongRow.jsx[22m
+[2m6:26:37 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m6:26:56 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AlbumCard.jsx[22m
+[2m6:30:23 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.jsx[22m
+[2m6:30:31 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m6:33:06 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.jsx[22m
+[2m6:37:46 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AddSong.jsx[22m
+[2m6:41:01 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/PlayerContext.jsx[22m
+[2m6:41:01 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/PlayerContext.jsx[22m Could not Fast Refresh ("usePlayer" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m6:41:01 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/context/PlayerContext.jsx[22m
+[2m6:41:08 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SongRow.jsx[22m
+[2m6:41:12 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/FeaturedCard.jsx[22m
+[2m6:41:21 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m6:41:31 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m6:41:42 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m6:42:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx[22m
+[2m6:43:19 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx[22m
+[2m6:44:10 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Search.jsx[22m
+[2m6:44:19 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m6:47:13 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AlbumCard.jsx[22m
+[2m6:47:45 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m6:50:05 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AddSong.jsx[22m
+[2m6:53:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AddSong.jsx[22m
+[2m6:53:10 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m6:57:15 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx[22m
+[2m6:57:27 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx[22m
+[2m6:59:20 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:01:26 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:14:08 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:14:13 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AlbumCard.jsx[22m
+[2m7:14:59 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.jsx[22m
+[2m7:14:59 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx[22m
+[2m7:14:59 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m7:14:59 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx[22m
+[2m7:14:59 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AlbumCard.jsx[22m
+[2m7:15:00 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Library.jsx[22m
+[2m7:16:56 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Library.jsx[22m
+[2m7:22:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/FeaturedCard.jsx[22m
+[2m7:22:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m7:22:52 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Search.jsx[22m
+[2m7:26:44 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m7:28:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/MainLayout.jsx[22m
+[2m7:28:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx[22m
+[2m7:28:04 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx[22m
+[2m7:28:05 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m7:30:29 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/AlbumCard.jsx[22m
+[2m7:30:29 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SongRow.jsx[22m
+[2m7:30:30 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/FeaturedCard.jsx[22m
+[2m7:32:35 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Home.jsx[22m
+[2m7:32:35 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Search.jsx[22m
+[2m7:32:35 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Library.jsx[22m
+[2m7:32:35 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/LikedSongs.jsx[22m
+[2m7:35:48 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AddSong.jsx[22m
+[2m7:37:58 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:51:41 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/PlayerContext.jsx[22m
+[2m7:51:41 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/PlayerContext.jsx[22m Could not Fast Refresh ("usePlayer" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m7:51:41 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/context/PlayerContext.jsx[22m
+[2m7:52:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m7:52:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/AddSong.jsx[22m
+[2m7:52:16 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:52:44 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/ManageSongs.jsx[22m
+[2m7:52:55 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/PlayerContext.jsx[22m
+[2m7:52:55 PM[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/PlayerContext.jsx[22m Could not Fast Refresh ("usePlayer" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m7:52:55 PM[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/context/PlayerContext.jsx[22m
+[2m7:54:28 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m
+[2m7:59:38 PM[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/PlayerBar.jsx[22m

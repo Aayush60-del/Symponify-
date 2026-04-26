@@ -1,0 +1,210 @@
+import { useEffect, useMemo, useState } from 'react'
+import axios from 'axios'
+import { useSearchParams } from 'react-router-dom'
+import AlbumCard from '../components/AlbumCard'
+import SongRow from '../components/SongRow'
+import { usePlayer } from '../context/PlayerContext'
+import useViewport from '../hooks/useViewport'
+
+const genrePills = ['All', 'Pop', 'Jazz', 'Electronic', 'Chill']
+
+const styles = {
+  page: {
+    padding: '28px',
+    overflowY: 'auto',
+    height: '100%',
+  },
+  top: {
+    display: 'grid',
+    gridTemplateColumns: '1.1fr 0.9fr',
+    gap: '18px',
+    marginBottom: '28px',
+  },
+  searchBox: {
+    padding: '18px 22px',
+    borderRadius: '24px',
+    background: 'var(--surface)',
+    border: '1px solid var(--line)',
+    boxShadow: 'var(--shadow)',
+  },
+  searchInput: {
+    width: '100%',
+    border: 'none',
+    outline: 'none',
+    background: 'transparent',
+    fontSize: '24px',
+    fontWeight: 700,
+  },
+  pillRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '10px',
+    marginTop: '18px',
+  },
+  pill: {
+    padding: '10px 14px',
+    borderRadius: '999px',
+    background: 'var(--surface-2)',
+    cursor: 'pointer',
+    fontSize: '13px',
+    fontWeight: 700,
+  },
+  topResult: {
+    borderRadius: '28px',
+    padding: '24px',
+    background: 'linear-gradient(140deg, #15122b, #382757 60%, #ff5c35)',
+    color: '#fff',
+    minHeight: '220px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  topBadge: {
+    fontSize: '11px',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.74)',
+    fontWeight: 700,
+  },
+  topResultButton: {
+    background: 'transparent',
+    color: 'inherit',
+    textAlign: 'left',
+    cursor: 'pointer',
+  },
+  sectionTitle: {
+    fontSize: '20px',
+    fontWeight: 800,
+    marginBottom: '14px',
+  },
+  albumGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(144px, 1fr))',
+    gap: '18px',
+    marginBottom: '30px',
+  },
+}
+
+export default function Search() {
+  const { playSong } = usePlayer()
+  const { isMobile, isTabletOrBelow, isCompact } = useViewport()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [search, setSearch] = useState(() => searchParams.get('q') || '')
+  const [genre, setGenre] = useState(() => searchParams.get('genre') || 'All')
+  const [songs, setSongs] = useState([])
+  const [albums, setAlbums] = useState([])
+
+  useEffect(() => {
+    setSearch(searchParams.get('q') || '')
+    setGenre(searchParams.get('genre') || 'All')
+  }, [searchParams])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (genre !== 'All') params.set('genre', genre)
+
+    axios
+      .get(`/api/songs${params.toString() ? `?${params.toString()}` : ''}`)
+      .then((response) => setSongs(response.data))
+      .catch(() => setSongs([]))
+
+    axios
+      .get('/api/songs/albums')
+      .then((response) => setAlbums(response.data))
+      .catch(() => setAlbums([]))
+  }, [genre, search])
+
+  const topResult = useMemo(() => songs[0], [songs])
+
+  const updateSearch = (value) => {
+    setSearch(value)
+    const nextParams = new URLSearchParams(searchParams)
+
+    if (value.trim()) {
+      nextParams.set('q', value.trim())
+    } else {
+      nextParams.delete('q')
+    }
+
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  const updateGenre = (value) => {
+    setGenre(value)
+    const nextParams = new URLSearchParams(searchParams)
+
+    if (value !== 'All') {
+      nextParams.set('genre', value)
+    } else {
+      nextParams.delete('genre')
+    }
+
+    setSearchParams(nextParams, { replace: true })
+  }
+
+  return (
+    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding }} className="scrollbar-hidden">
+      <div style={{ ...styles.top, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.top.gridTemplateColumns }}>
+        <section style={{ ...styles.searchBox, padding: isMobile ? '16px' : styles.searchBox.padding }}>
+          <input
+            style={{ ...styles.searchInput, fontSize: isMobile ? '20px' : styles.searchInput.fontSize }}
+            placeholder="Search for songs, albums, artists"
+            value={search}
+            onChange={(event) => updateSearch(event.target.value)}
+          />
+          <div style={styles.pillRow}>
+            {genrePills.map((item) => (
+              <button
+                key={item}
+                type="button"
+                style={{
+                  ...styles.pill,
+                  background: genre === item ? 'var(--text)' : 'var(--surface-2)',
+                  color: genre === item ? '#fff' : 'var(--text-2)',
+                }}
+                onClick={() => updateGenre(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <section style={{ ...styles.topResult, minHeight: isMobile ? '180px' : styles.topResult.minHeight, padding: isMobile ? '20px' : styles.topResult.padding }}>
+          <span style={styles.topBadge}>Top result</span>
+          {topResult ? (
+            <button type="button" style={styles.topResultButton} onClick={() => playSong(topResult, songs)}>
+              <div style={{ fontSize: isMobile ? '40px' : '48px', marginBottom: '12px' }}>{topResult.emoji || '🎵'}</div>
+              <h2 style={{ fontSize: isMobile ? '26px' : '32px', marginBottom: '8px', wordBreak: 'break-word' }}>{topResult.title}</h2>
+              <p style={{ color: 'rgba(255,255,255,0.72)' }}>
+                {topResult.artist} • {topResult.album || 'Single'}
+              </p>
+            </button>
+          ) : (
+            <div>
+              <h2 style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '8px' }}>Start typing</h2>
+              <p style={{ color: 'rgba(255,255,255,0.72)' }}>Search your library or discover what matches your mood.</p>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <section>
+        <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Albums</h2>
+        <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : '144px'}, 1fr))` }}>
+          {albums.map((album, index) => (
+            <AlbumCard key={`${album.title}-${index}`} album={album} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Songs</h2>
+        {songs.map((song, index) => (
+          <SongRow key={`${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, songs)} />
+        ))}
+      </section>
+    </div>
+  )
+}

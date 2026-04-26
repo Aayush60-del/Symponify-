@@ -1,0 +1,48 @@
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
+RangeNotSatisfiableError: Range Not Satisfiable
+    at createHttpError (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:983:7)
+    at SendStream.error (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:270:31)
+    at SendStream.send (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:665:19)
+    at onstat (D:\WEB\Projects\Symponify\server\node_modules\send\index.js:724:10)
+    at FSReqCallback.oncomplete (node:fs:195:5) {
+  headers: { 'Content-Range': 'bytes */0' }
+}
