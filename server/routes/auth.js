@@ -4,14 +4,15 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
 const FIXED_ADMIN = {
-  name: 'Ayush Admin',
-  email: 'ayush_ius@gmail.com',
-  password: 'Ayushnegi@123',
+  name: process.env.ADMIN_NAME || 'Symponify Admin',
+  email: (process.env.ADMIN_EMAIL || '').trim().toLowerCase(),
+  password: process.env.ADMIN_PASSWORD || '',
 }
 
 const normalizeEmail = (value = '') => value.trim().toLowerCase()
 
-const isFixedAdminLogin = (email, password) => normalizeEmail(email) === FIXED_ADMIN.email && password === FIXED_ADMIN.password
+const isFixedAdminConfigured = () => Boolean(FIXED_ADMIN.email && FIXED_ADMIN.password)
+const isFixedAdminLogin = (email, password) => isFixedAdminConfigured() && normalizeEmail(email) === FIXED_ADMIN.email && password === FIXED_ADMIN.password
 
 const createToken = (user, isAdminOverride = Boolean(user.isAdmin)) =>
   jwt.sign(
@@ -121,7 +122,7 @@ router.post('/make-admin', async (req, res) => {
       return res.status(400).json({ message: 'Email is required' })
     }
 
-    const user = await User.findOneAndUpdate({ email }, { isAdmin: email === FIXED_ADMIN.email }, { new: true })
+    const user = await User.findOneAndUpdate({ email }, { isAdmin: isFixedAdminConfigured() && email === FIXED_ADMIN.email }, { new: true })
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
@@ -142,6 +143,10 @@ router.post('/admin-access', async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' })
+    }
+
+    if (!isFixedAdminConfigured()) {
+      return res.status(503).json({ message: 'Admin access is not configured on the server.' })
     }
 
     if (!isFixedAdminLogin(email, password)) {

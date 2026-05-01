@@ -7,10 +7,23 @@ const connectDB = require('./config/db')
 
 const app = express()
 connectDB()
+app.set('trust proxy', 1)
+
+const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
 
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      if (!origin || !allowedOrigins.length || allowedOrigins.includes(origin)) {
+        callback(null, true)
+        return
+      }
+
+      callback(new Error('CORS blocked for this origin'))
+    },
     credentials: true,
   })
 )

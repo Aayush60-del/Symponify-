@@ -46,12 +46,22 @@ const deleteFileIfExists = (filePath) => {
   }
 }
 
+const removeAlbumIfUnused = async (albumTitle) => {
+  const normalizedTitle = albumTitle?.trim()
+  if (!normalizedTitle) return
+
+  const hasSongs = await Song.exists({ album: normalizedTitle })
+  if (!hasSongs) {
+    await Album.deleteOne({ title: normalizedTitle })
+  }
+}
+
 const ensureNonEmptyUpload = (file, label) => {
   if (!file) return
   if (file.size > 0) return
 
   deleteFileIfExists(file.path)
-  const error = new Error(`${label} file empty hai. Valid file dobara upload karo.`)
+  const error = new Error(`${label} file is empty. Please upload a valid file.`)
   error.status = 400
   throw error
 }
@@ -243,11 +253,11 @@ router.post(
       if (!req.user?.isAdmin) return res.status(403).json({ message: 'Only admins can upload songs' })
 
       const { title, artist, album, duration, genre, emoji, color } = req.body
-      if (!title || !artist) return res.status(400).json({ message: 'Title aur artist zaroori hain!' })
+      if (!title || !artist) return res.status(400).json({ message: 'Title and artist are required.' })
 
       const audioFile = req.files?.audio?.[0]
       const coverFile = req.files?.cover?.[0]
-      if (!audioFile) return res.status(400).json({ message: 'Audio file zaroori hai!' })
+      if (!audioFile) return res.status(400).json({ message: 'Audio file is required.' })
 
       ensureNonEmptyUpload(audioFile, 'Audio')
       ensureNonEmptyUpload(coverFile, 'Cover')
@@ -299,7 +309,7 @@ router.put(
 
       const audioFile = req.files?.audio?.[0]
       const coverFile = req.files?.cover?.[0]
-      if (!audioFile && !coverFile) return res.status(400).json({ message: 'Audio ya cover file select karo' })
+      if (!audioFile && !coverFile) return res.status(400).json({ message: 'Please choose an audio or cover file.' })
 
       ensureNonEmptyUpload(audioFile, 'Audio')
       ensureNonEmptyUpload(coverFile, 'Cover')
@@ -383,7 +393,19 @@ router.put('/albums/:album', authMiddleware, async (req, res) => {
 
     await Promise.all([
       Song.updateMany({ album: currentAlbum }, { $set: { album: nextAlbum } }),
-      Album.findOneAndUpdate({ title: currentAlbum }, { $set: { title: nextAlbum } }, { new: true }),
+      Album.findOneAndUpdate(
+        { title: currentAlbum },
+        {
+          $set: { title: nextAlbum },
+          $setOnInsert: {
+            artist: firstSong?.artist || '',
+            color: firstSong?.color || 'linear-gradient(135deg, #333, #666)',
+            emoji: firstSong?.emoji || 'Music',
+            coverUrl: firstSong?.coverUrl || '',
+          },
+        },
+        { new: true, upsert: true }
+      ),
     ])
 
     res.json({ message: 'Album renamed successfully', album: nextAlbum })
@@ -399,6 +421,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     const song = await Song.findById(req.params.id)
     if (!song) return res.status(404).json({ message: 'Song not found' })
 
+    const previousAlbum = song.album
     const fields = ['title', 'artist', 'album', 'duration', 'genre', 'emoji', 'color']
     fields.forEach((field) => {
       if (typeof req.body[field] === 'string') song[field] = req.body[field]
@@ -406,6 +429,9 @@ router.put('/:id', authMiddleware, async (req, res) => {
 
     await song.save()
     await syncAlbumRecord({ title: song.album, artist: song.artist, color: song.color, emoji: song.emoji, coverUrl: song.coverUrl })
+    if (previousAlbum !== song.album) {
+      await removeAlbumIfUnused(previousAlbum)
+    }
 
     res.json({ message: 'Song updated successfully', song })
   } catch (error) {
@@ -420,8 +446,10 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     const song = await Song.findById(req.params.id)
     if (!song) return res.status(404).json({ message: 'Song not found' })
 
+    const albumTitle = song.album
     await Song.deleteOne({ _id: req.params.id })
     await User.updateMany({}, { $pull: { likedSongs: req.params.id } })
+    await removeAlbumIfUnused(albumTitle)
 
     res.json({ message: 'Song deleted successfully' })
   } catch (error) {

@@ -11,6 +11,7 @@ import Search from './pages/Search'
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(Boolean(localStorage.getItem('token')))
+  const [isGuest, setIsGuest] = useState(localStorage.getItem('guestAccess') === 'true')
   const [isAdmin, setIsAdmin] = useState(() => {
     try {
       return Boolean(JSON.parse(localStorage.getItem('user') || 'null')?.isAdmin)
@@ -22,6 +23,7 @@ function App() {
   useEffect(() => {
     const syncAuth = () => {
       setIsLoggedIn(Boolean(localStorage.getItem('token')))
+      setIsGuest(localStorage.getItem('guestAccess') === 'true')
       try {
         setIsAdmin(Boolean(JSON.parse(localStorage.getItem('user') || 'null')?.isAdmin))
       } catch {
@@ -38,10 +40,12 @@ function App() {
     }
   }, [])
 
+  const canAccessApp = isLoggedIn || isGuest
+
   return (
     <Routes>
-      <Route path="/login" element={isLoggedIn ? <Navigate to="/" replace /> : <Login />} />
-      <Route path="/" element={isLoggedIn ? <MainLayout /> : <Navigate to="/login" replace />}>
+      <Route path="/login" element={canAccessApp ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/" element={canAccessApp ? <MainLayout /> : <Navigate to="/login" replace />}>
         <Route index element={<Home />} />
         <Route path="add-song" element={isAdmin ? <AddSong /> : <Navigate to="/" replace />} />
         <Route path="manage-songs" element={isAdmin ? <ManageSongs /> : <Navigate to="/" replace />} />
@@ -49,7 +53,7 @@ function App() {
         <Route path="search" element={<Search />} />
         <Route path="library" element={<Library />} />
       </Route>
-      <Route path="*" element={<Navigate to={isLoggedIn ? '/' : '/login'} replace />} />
+      <Route path="*" element={<Navigate to={canAccessApp ? '/' : '/login'} replace />} />
     </Routes>
   )
 }

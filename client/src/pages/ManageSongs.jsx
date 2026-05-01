@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
 import { FiAlertCircle, FiEdit3, FiMusic, FiPlusCircle, FiSave, FiTrash2, FiUpload, FiX } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
@@ -297,7 +297,7 @@ export default function ManageSongs() {
 
   const loadData = async (preferredAlbum = '') => {
     try {
-      const [songsResponse, albumsResponse] = await Promise.all([axios.get('/api/songs'), axios.get('/api/songs/albums')])
+      const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
       const nextSongs = songsResponse.data
       const nextAlbums = albumsResponse.data
 
@@ -351,7 +351,7 @@ export default function ManageSongs() {
 
   const saveSong = async (songId) => {
     try {
-      const { data } = await axios.put(`/api/songs/${songId}`, editForm, {
+      const { data } = await api.put(`/api/songs/${songId}`, editForm, {
         headers: { Authorization: `Bearer ${token}` },
       })
       await loadData(data.song.album || selectedAlbum)
@@ -365,7 +365,7 @@ export default function ManageSongs() {
 
   const deleteSong = async (songId) => {
     try {
-      await axios.delete(`/api/songs/${songId}`, {
+      await api.delete(`/api/songs/${songId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       await loadData(selectedAlbum)
@@ -388,7 +388,7 @@ export default function ManageSongs() {
 
     try {
       setCreatingAlbum(true)
-      const { data } = await axios.post(
+      const { data } = await api.post(
         '/api/songs/albums',
         {
           title,
@@ -419,7 +419,7 @@ export default function ManageSongs() {
       formData.append('title', selectedAlbum)
       formData.append('cover', file)
 
-      await axios.post(`/api/songs/albums/${encodeURIComponent(selectedAlbum)}/cover`, formData, {
+      await api.post(`/api/songs/albums/${encodeURIComponent(selectedAlbum)}/cover`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -441,7 +441,7 @@ export default function ManageSongs() {
     if (!selectedAlbum || !nextAlbum || nextAlbum === selectedAlbum) return
 
     try {
-      const { data } = await axios.put(
+      const { data } = await api.put(
         `/api/songs/albums/${encodeURIComponent(selectedAlbum)}`,
         { album: nextAlbum },
         {
@@ -470,7 +470,7 @@ export default function ManageSongs() {
       const formData = new FormData()
       formData.append(field, file)
 
-      await axios.put(`/api/songs/${songId}/media`, formData, {
+      await api.put(`/api/songs/${songId}/media`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

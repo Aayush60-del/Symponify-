@@ -1,8 +1,8 @@
-import { usePlayer } from '../context/PlayerContext'
+import { useNavigate } from 'react-router-dom'
 import useViewport from '../hooks/useViewport'
 
-export default function AlbumCard({ album, onSelect, active = false }) {
-  const { playTrack } = usePlayer()
+export default function AlbumCard({ album, onSelect, active = false, onOpen }) {
+  const navigate = useNavigate()
   const { isMobile, isWide } = useViewport()
   const hasCover = Boolean(album.coverUrl)
 
@@ -12,14 +12,12 @@ export default function AlbumCard({ album, onSelect, active = false }) {
       return
     }
 
-    playTrack({
-      title: album.title,
-      artist: album.artist || 'Symponify Radio',
-      album: album.title,
-      emoji: album.emoji || '🎵',
-      color: album.color,
-      coverUrl: album.coverUrl,
-    })
+    if (onOpen) {
+      onOpen(album)
+      return
+    }
+
+    navigate(`/search?q=${encodeURIComponent(album.title)}`)
   }
 
   return (
@@ -32,7 +30,7 @@ export default function AlbumCard({ album, onSelect, active = false }) {
           fontSize: isMobile ? '34px' : isWide ? '46px' : styles.art.fontSize,
         }}
       >
-        {hasCover ? <img src={album.coverUrl} alt={`${album.title} cover`} style={styles.image} /> : album.emoji || '🎵'}
+        {hasCover ? <img src={album.coverUrl} alt={`${album.title} cover`} style={styles.image} /> : album.emoji || 'Music'}
       </div>
       <div style={styles.title}>{album.title}</div>
       <div style={styles.artist}>{album.artist || 'Symponify Radio'}</div>

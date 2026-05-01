@@ -38,7 +38,7 @@ const fileFilter = (_req, file, cb) => {
       return
     }
 
-    cb(new Error('Sirf MP3/WAV/OGG/M4A files allowed hain!'))
+    cb(new Error('Only MP3, WAV, OGG, and M4A audio files are allowed.'))
     return
   }
 
@@ -48,7 +48,7 @@ const fileFilter = (_req, file, cb) => {
     return
   }
 
-  cb(new Error('Sirf JPG/PNG/WEBP images allowed hain!'))
+  cb(new Error('Only JPG, PNG, and WEBP image files are allowed.'))
 }
 
 module.exports = multer({

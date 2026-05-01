@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FiHeart, FiPause, FiPlay, FiRepeat, FiShuffle, FiSkipBack, FiSkipForward, FiVolume2 } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
@@ -100,30 +100,14 @@ const styles = {
     fontFamily: 'var(--mono)',
     color: 'var(--text-3)',
   },
-  progressTrack: {
-    position: 'relative',
+  progressRange: {
+    '--progress': '0%',
+    width: '100%',
     height: '6px',
     borderRadius: '999px',
-    background: 'var(--surface-3)',
+    outline: 'none',
+    background: 'linear-gradient(to right, var(--accent) 0%, var(--accent-2) var(--progress), var(--surface-3) var(--progress), var(--surface-3) 100%)',
     cursor: 'pointer',
-  },
-  progressFill: {
-    height: '100%',
-    background: 'linear-gradient(90deg, var(--accent), var(--accent-2))',
-    borderRadius: '999px',
-  },
-  progressDot: {
-    position: 'absolute',
-    top: '50%',
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: '#fff',
-    border: '2px solid var(--accent)',
-    boxShadow: '0 4px 12px rgba(255, 92, 53, 0.28)',
-    transform: 'translate(-50%, -50%)',
-    transition: 'left 0.12s linear',
-    pointerEvents: 'none',
   },
   right: {
     display: 'flex',
@@ -139,9 +123,28 @@ const styles = {
 
 export default function PlayerBar() {
   const { isCompact, isMobile, isTabletOrBelow } = useViewport()
-  const { currentTrack, isPlaying, liked, shuffle, repeatMode, progress, progressPercent, duration, durationLabel, playbackError, seek, setVolume, toggleLike, togglePlay, playNext, playPrevious, toggleShuffle, cycleRepeatMode } = usePlayer()
-  const progressTrackRef = useRef(null)
-  const [dragPercent, setDragPercent] = useState(null)
+  const {
+    currentTrack,
+    isPlaying,
+    liked,
+    shuffle,
+    repeatMode,
+    progress,
+    progressPercent,
+    duration,
+    durationLabel,
+    playbackError,
+    seek,
+    setVolume,
+    toggleLike,
+    togglePlay,
+    playNext,
+    playPrevious,
+    toggleShuffle,
+    cycleRepeatMode,
+  } = usePlayer()
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragPercent, setDragPercent] = useState(0)
   const track = currentTrack || {
     title: 'Pick a song',
     artist: 'Symponify',
@@ -150,42 +153,26 @@ export default function PlayerBar() {
     color: 'linear-gradient(135deg, #ff5c35, #f0a500)',
   }
   const hasCover = Boolean(track.coverUrl)
-  const activeProgressPercent = dragPercent ?? progressPercent
+  const activeProgressPercent = isDragging ? dragPercent : progressPercent
+  const activeProgressTime = isDragging ? (dragPercent / 100) * duration : progress
 
-  const getRatioFromClientX = (clientX) => {
-    const bounds = progressTrackRef.current?.getBoundingClientRect()
-    if (!bounds || !bounds.width) return 0
-    return Math.max(0, Math.min(1, (clientX - bounds.left) / bounds.width))
+  useEffect(() => {
+    if (!isDragging) {
+      setDragPercent(progressPercent)
+    }
+  }, [isDragging, progressPercent])
+
+  const handleSeekInput = (event) => {
+    setIsDragging(true)
+    setDragPercent(Number(event.target.value))
   }
 
-  const commitSeek = (ratio) => {
+  const handleSeekCommit = (event) => {
+    const nextPercent = Number(event.target.value)
+    setDragPercent(nextPercent)
+    setIsDragging(false)
     if (!duration) return
-    seek(ratio * duration)
-  }
-
-  const handlePointerDown = (event) => {
-    if (!duration) return
-
-    const ratio = getRatioFromClientX(event.clientX)
-    setDragPercent(ratio * 100)
-    commitSeek(ratio)
-
-    const handlePointerMove = (moveEvent) => {
-      const nextRatio = getRatioFromClientX(moveEvent.clientX)
-      setDragPercent(nextRatio * 100)
-      commitSeek(nextRatio)
-    }
-
-    const handlePointerUp = (upEvent) => {
-      const nextRatio = getRatioFromClientX(upEvent.clientX)
-      setDragPercent(null)
-      commitSeek(nextRatio)
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerup', handlePointerUp)
-    }
-
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
+    seek((nextPercent / 100) * duration)
   }
 
   const computedStyles = {
@@ -219,6 +206,10 @@ export default function PlayerBar() {
       ...styles.progressRow,
       gridTemplateColumns: isTabletOrBelow ? '44px minmax(0, 1fr) 44px' : styles.progressRow.gridTemplateColumns,
       gap: isTabletOrBelow ? '8px' : styles.progressRow.gap,
+    },
+    progressRange: {
+      ...styles.progressRange,
+      '--progress': `${activeProgressPercent}%`,
     },
     right: {
       ...styles.right,
@@ -276,15 +267,21 @@ export default function PlayerBar() {
           </button>
         </div>
         <div style={computedStyles.progressRow}>
-          <span style={styles.time}>{formatSeconds(progress)}</span>
-          <div
-            ref={progressTrackRef}
-            style={styles.progressTrack}
-            onPointerDown={handlePointerDown}
-          >
-            <div style={{ ...styles.progressFill, width: `${activeProgressPercent}%` }} />
-            <div style={{ ...styles.progressDot, left: `${activeProgressPercent}%` }} />
-          </div>
+          <span style={styles.time}>{formatSeconds(activeProgressTime)}</span>
+          <input
+            className="player-progress"
+            type="range"
+            min="0"
+            max="100"
+            step="0.1"
+            value={activeProgressPercent}
+            style={computedStyles.progressRange}
+            onInput={handleSeekInput}
+            onChange={handleSeekCommit}
+            onMouseUp={handleSeekCommit}
+            onTouchEnd={handleSeekCommit}
+            aria-label="Song progress"
+          />
           <span style={styles.time}>{durationLabel || track.duration || formatSeconds(duration)}</span>
         </div>
       </div>

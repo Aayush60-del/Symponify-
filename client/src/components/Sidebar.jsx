@@ -101,6 +101,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
   const navigate = useNavigate()
   const { user } = usePlayer()
   const { isMobile, isTabletOrBelow, isWide } = useViewport()
+  const isGuest = localStorage.getItem('guestAccess') === 'true'
 
   const links = [
     { to: '/', label: 'Home', icon: FiGrid, end: true },
@@ -112,6 +113,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('guestAccess')
     window.dispatchEvent(new Event('authchange'))
     navigate('/login', { replace: true })
     onClose?.()
@@ -215,7 +217,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
         <p style={styles.ctaText}>A bright mix of synth, soul, and intimate acoustic sessions picked for you.</p>
         <button style={{ ...styles.ctaButton, width: isMobile ? '100%' : 'auto' }} onClick={logout}>
           <FiLogOut style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-          Logout
+          {isGuest ? 'Exit Guest Mode' : 'Logout'}
         </button>
       </div>
     </aside>

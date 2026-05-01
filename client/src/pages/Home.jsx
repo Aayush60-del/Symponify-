@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import api from '../lib/api'
 import AlbumCard from '../components/AlbumCard'
 import FeaturedCard from '../components/FeaturedCard'
 import SongRow from '../components/SongRow'
@@ -91,17 +91,37 @@ export default function Home() {
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
   const [selectedAlbum, setSelectedAlbum] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    axios
-      .get('/api/songs')
-      .then((response) => setSongs(response.data))
-      .catch(() => setSongs([]))
+    let ignore = false
 
-    axios
-      .get('/api/songs/albums')
-      .then((response) => setAlbums(response.data))
-      .catch(() => setAlbums([]))
+    const load = async () => {
+      try {
+        setLoading(true)
+        setError('')
+        const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
+        if (ignore) return
+        setSongs(songsResponse.data)
+        setAlbums(albumsResponse.data)
+      } catch {
+        if (ignore) return
+        setSongs([])
+        setAlbums([])
+        setError('We could not load your music right now.')
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      ignore = true
+    }
   }, [])
 
   const playFeaturedMix = () => {
@@ -154,7 +174,9 @@ export default function Home() {
             Fresh picks
           </button>
         </div>
-        {albums.length ? (
+        {loading ? (
+          <div style={styles.empty}>Loading albums and songs...</div>
+        ) : albums.length ? (
           <>
             <p style={styles.helper}>
               {selectedAlbum ? `${selectedAlbum} selected. Click again to clear the filter.` : 'Select an album to view its songs below.'}
@@ -182,7 +204,9 @@ export default function Home() {
             Recently played
           </button>
         </div>
-        {visibleSongs.length ? (
+        {error ? (
+          <div style={styles.empty}>{error}</div>
+        ) : visibleSongs.length ? (
           visibleSongs.map((song, index) => (
             <SongRow key={song._id || `${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, visibleSongs)} />
           ))

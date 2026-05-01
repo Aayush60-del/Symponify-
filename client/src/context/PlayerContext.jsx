@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
-import axios from 'axios'
+import api from '../lib/api'
 
 const PlayerContext = createContext(null)
 
@@ -224,7 +224,7 @@ export function PlayerProvider({ children }) {
       }
 
       try {
-        const { data } = await axios.get('/api/songs/liked', {
+        const { data } = await api.get('/api/songs/liked', {
           headers: { Authorization: `Bearer ${token}` },
         })
         setLikedSongs(data)
@@ -411,7 +411,7 @@ export function PlayerProvider({ children }) {
     if (!token) return
 
     try {
-      const { data } = await axios.post(
+      const { data } = await api.post(
         `/api/songs/like/${song._id}`,
         {},
         {

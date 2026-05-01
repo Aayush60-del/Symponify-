@@ -1,6 +1,6 @@
-# Aura Music
+# Symponify Music
 
-A MERN music streaming starter with a warm minimal UI.
+A React + Express + MongoDB music app with a warm minimal UI.
 
 ## Structure
 
@@ -12,7 +12,6 @@ A MERN music streaming starter with a warm minimal UI.
 ```bash
 cd server
 npm install
-cp .env.example .env
 npm run dev
 ```
 
@@ -21,6 +20,16 @@ cd client
 npm install
 npm run dev
 ```
+
+Create `server/.env` from `server/.env.example` before starting the backend.
+
+Optional frontend env:
+
+```bash
+VITE_API_BASE_URL=
+```
+
+Leave it empty for local Vite proxy or same-origin deployments. Set it to your deployed backend origin when needed.
 
 ## Seed songs
 

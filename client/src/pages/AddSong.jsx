@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import axios from 'axios'
+import api from '../lib/api'
 import { useSearchParams } from 'react-router-dom'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
@@ -295,7 +295,7 @@ export default function AddSong() {
   const preselectedAlbum = searchParams.get('album') || ''
 
   useEffect(() => {
-    axios
+    api
       .get('/api/songs/albums')
       .then((response) => setAlbums(response.data))
       .catch(() => setAlbums([]))
@@ -423,7 +423,7 @@ export default function AddSong() {
       setProgress(0)
       setMessage({ text: '', type: '' })
 
-      await axios.post('/api/songs/upload', formData, {
+      await api.post('/api/songs/upload', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

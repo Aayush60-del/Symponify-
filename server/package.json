@@ -1,5 +1,5 @@
 {
-  "name": "aura-music-server",
+  "name": "symponify-server",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {

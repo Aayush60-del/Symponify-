@@ -136,6 +136,55 @@ textarea {
   scrollbar-width: none;
 }
 
+.player-progress {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.player-progress::-webkit-slider-runnable-track {
+  height: 6px;
+  background: transparent;
+  border-radius: 999px;
+}
+
+.player-progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(255, 92, 53, 0.28);
+  transition: transform 0.15s ease;
+}
+
+.player-progress:active::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+
+.player-progress::-moz-range-track {
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 999px;
+}
+
+.player-progress::-moz-range-progress {
+  height: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 999px;
+}
+
+.player-progress::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--accent);
+  box-shadow: 0 4px 12px rgba(255, 92, 53, 0.28);
+}
+
 @media (max-width: 768px) {
   :root {
     --radius: 20px;

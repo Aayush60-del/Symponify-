@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../lib/api'
 import useViewport from '../hooks/useViewport'
 
 const styles = {
@@ -167,10 +167,20 @@ export default function Login() {
   const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
   const handleAuthSuccess = (data, nextPath = '/') => {
+    localStorage.removeItem('guestAccess')
     localStorage.setItem('token', data.token)
     localStorage.setItem('user', JSON.stringify(data.user))
     window.dispatchEvent(new Event('authchange'))
     navigate(nextPath, { replace: true })
+  }
+
+  const skipToApp = () => {
+    setError('')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    localStorage.setItem('guestAccess', 'true')
+    window.dispatchEvent(new Event('authchange'))
+    navigate('/', { replace: true })
   }
 
   const handleChange = (event) => {
@@ -183,7 +193,7 @@ export default function Login() {
     try {
       const endpoint = tab === 'login' ? '/api/auth/login' : '/api/auth/register'
       const payload = tab === 'login' ? { email: form.email, password: form.password } : form
-      const { data } = await axios.post(endpoint, payload)
+      const { data } = await api.post(endpoint, payload)
       handleAuthSuccess(data)
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
@@ -195,7 +205,7 @@ export default function Login() {
     setTab('login')
 
     try {
-      const { data } = await axios.post('/api/auth/admin-access', {
+      const { data } = await api.post('/api/auth/admin-access', {
         email: form.email,
         password: form.password,
       })
@@ -307,10 +317,13 @@ export default function Login() {
           <button style={styles.button} onClick={submit}>
             {tab === 'login' ? 'Sign In ->' : 'Create Account ->'}
           </button>
+          <button style={styles.secondaryButton} onClick={skipToApp}>
+            Skip and Explore
+          </button>
           <button style={styles.secondaryButton} onClick={openAdminAccess}>
             Admin Access
           </button>
-          <p style={styles.hint}>Admin access is available only for approved admin accounts.</p>
+          <p style={styles.hint}>Skip to browse as a guest, or use approved admin credentials for upload controls.</p>
         </section>
       </div>
     </div>

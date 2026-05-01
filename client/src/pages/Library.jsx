@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
+import api from '../lib/api'
 import AlbumCard from '../components/AlbumCard'
 import useViewport from '../hooks/useViewport'
 
 const tabs = ['Albums', 'Artists', 'Podcasts']
 
 const podcastItems = [
-  { title: 'Studio Notes', artist: 'Creative Talk', emoji: '🎙️', color: 'linear-gradient(135deg, #372248, #7c4dff)' },
-  { title: 'Slow Mornings', artist: 'Daily Rituals', emoji: '☕', color: 'linear-gradient(135deg, #67412c, #d88c52)' },
-  { title: 'After Midnight', artist: 'Night Stories', emoji: '🌘', color: 'linear-gradient(135deg, #0b132b, #1c2541)' },
+  { title: 'Studio Notes', artist: 'Creative Talk', emoji: 'Mic', color: 'linear-gradient(135deg, #372248, #7c4dff)' },
+  { title: 'Slow Mornings', artist: 'Daily Rituals', emoji: 'Coffee', color: 'linear-gradient(135deg, #67412c, #d88c52)' },
+  { title: 'After Midnight', artist: 'Night Stories', emoji: 'Moon', color: 'linear-gradient(135deg, #0b132b, #1c2541)' },
 ]
 
 const styles = {
@@ -72,17 +72,37 @@ export default function Library() {
   const [activeTab, setActiveTab] = useState('Albums')
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    axios
-      .get('/api/songs')
-      .then((response) => setSongs(response.data))
-      .catch(() => setSongs([]))
+    let ignore = false
 
-    axios
-      .get('/api/songs/albums')
-      .then((response) => setAlbums(response.data))
-      .catch(() => setAlbums([]))
+    const load = async () => {
+      try {
+        setLoading(true)
+        setError('')
+        const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
+        if (ignore) return
+        setSongs(songsResponse.data)
+        setAlbums(albumsResponse.data)
+      } catch {
+        if (ignore) return
+        setSongs([])
+        setAlbums([])
+        setError('Library data is unavailable right now.')
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      ignore = true
+    }
   }, [])
 
   const artistItems = useMemo(() => {
@@ -95,7 +115,7 @@ export default function Library() {
       artistMap.set(key, {
         title: key,
         artist: 'Artist Collection',
-        emoji: song.emoji || '🎤',
+        emoji: song.emoji || 'Artist',
         color: song.color || 'linear-gradient(135deg, #6536d6, #b35fff)',
         coverUrl: song.coverUrl || '',
       })
@@ -137,7 +157,11 @@ export default function Library() {
         </p>
       </section>
 
-      {items.length ? (
+      {loading ? (
+        <div style={styles.empty}>Loading your library...</div>
+      ) : error ? (
+        <div style={styles.empty}>{error}</div>
+      ) : items.length ? (
         <div style={{ ...styles.grid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
           {items.map((item, index) => (
             <AlbumCard key={`${item.title}-${index}`} album={item} />

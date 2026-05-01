@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import axios from 'axios'
 import { useSearchParams } from 'react-router-dom'
+import api from '../lib/api'
 import AlbumCard from '../components/AlbumCard'
 import SongRow from '../components/SongRow'
 import { usePlayer } from '../context/PlayerContext'
@@ -83,6 +83,13 @@ const styles = {
     gap: '18px',
     marginBottom: '30px',
   },
+  empty: {
+    padding: '24px',
+    borderRadius: '22px',
+    background: 'rgba(255,255,255,0.74)',
+    border: '1px solid var(--line)',
+    color: 'var(--text-2)',
+  },
 }
 
 export default function Search() {
@@ -93,6 +100,8 @@ export default function Search() {
   const [genre, setGenre] = useState(() => searchParams.get('genre') || 'All')
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     setSearch(searchParams.get('q') || '')
@@ -104,15 +113,36 @@ export default function Search() {
     if (search) params.set('search', search)
     if (genre !== 'All') params.set('genre', genre)
 
-    axios
-      .get(`/api/songs${params.toString() ? `?${params.toString()}` : ''}`)
-      .then((response) => setSongs(response.data))
-      .catch(() => setSongs([]))
+    let ignore = false
 
-    axios
-      .get('/api/songs/albums')
-      .then((response) => setAlbums(response.data))
-      .catch(() => setAlbums([]))
+    const load = async () => {
+      try {
+        setLoading(true)
+        setError('')
+        const [songsResponse, albumsResponse] = await Promise.all([
+          api.get(`/api/songs${params.toString() ? `?${params.toString()}` : ''}`),
+          api.get('/api/songs/albums'),
+        ])
+        if (ignore) return
+        setSongs(songsResponse.data)
+        setAlbums(albumsResponse.data)
+      } catch {
+        if (ignore) return
+        setSongs([])
+        setAlbums([])
+        setError('Search is unavailable right now.')
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      ignore = true
+    }
   }, [genre, search])
 
   const topResult = useMemo(() => songs[0], [songs])
@@ -175,16 +205,18 @@ export default function Search() {
           <span style={styles.topBadge}>Top result</span>
           {topResult ? (
             <button type="button" style={styles.topResultButton} onClick={() => playSong(topResult, songs)}>
-              <div style={{ fontSize: isMobile ? '40px' : '48px', marginBottom: '12px' }}>{topResult.emoji || '🎵'}</div>
+              <div style={{ fontSize: isMobile ? '40px' : '48px', marginBottom: '12px' }}>{topResult.emoji || 'Music'}</div>
               <h2 style={{ fontSize: isMobile ? '26px' : '32px', marginBottom: '8px', wordBreak: 'break-word' }}>{topResult.title}</h2>
               <p style={{ color: 'rgba(255,255,255,0.72)' }}>
-                {topResult.artist} • {topResult.album || 'Single'}
+                {topResult.artist} | {topResult.album || 'Single'}
               </p>
             </button>
           ) : (
             <div>
-              <h2 style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '8px' }}>Start typing</h2>
-              <p style={{ color: 'rgba(255,255,255,0.72)' }}>Search your library or discover what matches your mood.</p>
+              <h2 style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '8px' }}>{loading ? 'Loading...' : 'Start typing'}</h2>
+              <p style={{ color: 'rgba(255,255,255,0.72)' }}>
+                {loading ? 'Fetching songs and albums for you.' : 'Search your library or discover what matches your mood.'}
+              </p>
             </div>
           )}
         </section>
@@ -192,18 +224,28 @@ export default function Search() {
 
       <section>
         <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Albums</h2>
-        <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
-          {albums.map((album, index) => (
-            <AlbumCard key={`${album.title}-${index}`} album={album} />
-          ))}
-        </div>
+        {loading ? (
+          <div style={styles.empty}>Loading results...</div>
+        ) : (
+          <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
+            {albums.map((album, index) => (
+              <AlbumCard key={`${album.title}-${index}`} album={album} />
+            ))}
+          </div>
+        )}
       </section>
 
       <section>
         <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Songs</h2>
-        {songs.map((song, index) => (
-          <SongRow key={`${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, songs)} />
-        ))}
+        {error ? (
+          <div style={styles.empty}>{error}</div>
+        ) : songs.length ? (
+          songs.map((song, index) => (
+            <SongRow key={`${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, songs)} />
+          ))
+        ) : (
+          <div style={styles.empty}>{loading ? 'Loading songs...' : 'No songs matched your search.'}</div>
+        )}
       </section>
     </div>
   )
