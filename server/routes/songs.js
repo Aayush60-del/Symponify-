@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const router = require('express').Router()
 const Album = require('../models/Album')
 const Song = require('../models/Song')
@@ -16,25 +17,46 @@ const buildMediaUrl = (req, folderName, filename) => {
   return `${baseUrl}/songs/${encodeURIComponent(sanitizeSongTitle(folderName))}/${filename}`
 }
 
-const getLocalMediaPath = (mediaUrl) => {
+const getMediaRelativePath = (mediaUrl) => {
   if (!mediaUrl) return ''
 
   try {
     const parsed = new URL(mediaUrl)
     const relativePath = decodeURIComponent(parsed.pathname.replace(/^\/songs\//, ''))
-    if (!relativePath || relativePath === parsed.pathname) return ''
-    return require('path').join(__dirname, '../public/songs', relativePath)
+    return !relativePath || relativePath === parsed.pathname ? '' : relativePath
   } catch {
-    return ''
+    const normalized = decodeURIComponent(String(mediaUrl).replace(/^\/songs\//, '').replace(/^songs\//, ''))
+    return normalized && normalized !== mediaUrl ? normalized : ''
   }
 }
 
-const withMediaFlags = (song) => {
-  const audioPath = getLocalMediaPath(song.audioUrl)
-  const coverPath = getLocalMediaPath(song.coverUrl)
+const getLocalMediaPath = (mediaUrl) => {
+  const relativePath = getMediaRelativePath(mediaUrl)
+  return relativePath ? path.join(__dirname, '../public/songs', relativePath) : ''
+}
+
+const normalizeMediaUrl = (req, mediaUrl) => {
+  const relativePath = getMediaRelativePath(mediaUrl)
+  if (!relativePath) return mediaUrl || ''
+
+  const parts = relativePath.split(/[\\/]/)
+  if (parts.length < 2) return mediaUrl || ''
+
+  const filename = parts.pop()
+  const folderName = parts.join('/')
+  return buildMediaUrl(req, folderName, filename)
+}
+
+const withMediaFlags = (req, song) => {
+  const audioUrl = normalizeMediaUrl(req, song.audioUrl)
+  const coverUrl = normalizeMediaUrl(req, song.coverUrl)
+  const audioPath = getLocalMediaPath(audioUrl)
+  const coverPath = getLocalMediaPath(coverUrl)
 
   return {
     ...song,
+    audioUrl,
+    coverUrl,
     audioReady: Boolean(audioPath && fs.existsSync(audioPath) && fs.statSync(audioPath).size > 0),
     coverReady: !coverPath || (fs.existsSync(coverPath) && fs.statSync(coverPath).size > 0),
   }
@@ -66,7 +88,7 @@ const ensureNonEmptyUpload = (file, label) => {
   throw error
 }
 
-const getAlbumsWithCounts = async () => {
+const getAlbumsWithCounts = async (req) => {
   const [storedAlbums, songs] = await Promise.all([
     Album.find({}).sort({ title: 1 }).lean(),
     Song.find({ album: { $ne: '' } }).select('album artist color emoji coverUrl').sort({ album: 1 }).lean(),
@@ -79,8 +101,8 @@ const getAlbumsWithCounts = async () => {
       title: album.title,
       artist: album.artist || '',
       color: album.color || 'linear-gradient(135deg, #333, #666)',
-      emoji: album.emoji || '🎵',
-      coverUrl: album.coverUrl || '',
+      emoji: album.emoji || 'Music',
+      coverUrl: normalizeMediaUrl(req, album.coverUrl),
       songCount: 0,
     })
   })
@@ -94,8 +116,8 @@ const getAlbumsWithCounts = async () => {
         title,
         artist: song.artist || '',
         color: song.color || 'linear-gradient(135deg, #333, #666)',
-        emoji: song.emoji || '🎵',
-        coverUrl: song.coverUrl || '',
+        emoji: song.emoji || 'Music',
+        coverUrl: normalizeMediaUrl(req, song.coverUrl),
         songCount: 0,
       })
     }
@@ -103,7 +125,7 @@ const getAlbumsWithCounts = async () => {
     const album = albumMap.get(title)
     album.songCount += 1
     if (!album.artist && song.artist) album.artist = song.artist
-    if (!album.coverUrl && song.coverUrl) album.coverUrl = song.coverUrl
+    if (!album.coverUrl && song.coverUrl) album.coverUrl = normalizeMediaUrl(req, song.coverUrl)
     if (!album.color && song.color) album.color = song.color
     if (!album.emoji && song.emoji) album.emoji = song.emoji
   })
@@ -145,15 +167,15 @@ router.get('/', async (req, res) => {
     }
 
     const songs = await Song.find(query).sort({ createdAt: -1 }).limit(50).lean()
-    res.json(songs.map(withMediaFlags))
+    res.json(songs.map((song) => withMediaFlags(req, song)))
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
 })
 
-router.get('/albums', async (_req, res) => {
+router.get('/albums', async (req, res) => {
   try {
-    const albums = await getAlbumsWithCounts()
+    const albums = await getAlbumsWithCounts(req)
     res.json(albums)
   } catch (error) {
     res.status(500).json({ message: error.message })
@@ -164,7 +186,7 @@ router.get('/liked', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('likedSongs')
     if (!user) return res.status(404).json({ message: 'User not found' })
-    res.json(user.likedSongs.map((song) => withMediaFlags(song.toObject())))
+    res.json(user.likedSongs.map((song) => withMediaFlags(req, song.toObject())))
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -205,7 +227,7 @@ router.post('/albums', authMiddleware, upload.single('cover'), async (req, res) 
       title,
       artist: req.body.artist?.trim() || '',
       color: req.body.color || 'linear-gradient(135deg, #333, #666)',
-      emoji: req.body.emoji || '🎵',
+      emoji: req.body.emoji || 'Music',
       coverUrl,
     })
 
@@ -216,7 +238,7 @@ router.post('/albums', authMiddleware, upload.single('cover'), async (req, res) 
         artist: album.artist,
         color: album.color,
         emoji: album.emoji,
-        coverUrl: album.coverUrl,
+        coverUrl: normalizeMediaUrl(req, album.coverUrl),
         songCount: 0,
       },
     })
@@ -235,7 +257,7 @@ router.post('/add', authMiddleware, async (req, res) => {
     const song = await Song.create({ title, artist, album, duration, genre, coverUrl, audioUrl, emoji, color, likes })
     await syncAlbumRecord({ title: album, artist, color, emoji, coverUrl })
 
-    res.status(201).json({ message: 'Song added successfully', song })
+    res.status(201).json({ message: 'Song added successfully', song: withMediaFlags(req, song.toObject()) })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
@@ -286,7 +308,7 @@ router.post(
         coverUrl: finalCoverUrl,
       })
 
-      res.status(201).json({ message: 'Song uploaded successfully!', song })
+      res.status(201).json({ message: 'Song uploaded successfully!', song: withMediaFlags(req, song.toObject()) })
     } catch (error) {
       res.status(error.status || 500).json({ message: error.message })
     }
@@ -332,7 +354,7 @@ router.put(
       }
 
       await song.save()
-      res.json({ message: 'Song media updated successfully', song })
+      res.json({ message: 'Song media updated successfully', song: withMediaFlags(req, song.toObject()) })
     } catch (error) {
       res.status(error.status || 500).json({ message: error.message })
     }
@@ -361,7 +383,7 @@ router.post('/albums/:album/cover', authMiddleware, upload.single('cover'), asyn
             coverUrl,
             artist: existingAlbum?.artist || firstSong?.artist || '',
             color: existingAlbum?.color || firstSong?.color || 'linear-gradient(135deg, #333, #666)',
-            emoji: existingAlbum?.emoji || firstSong?.emoji || '🎵',
+            emoji: existingAlbum?.emoji || firstSong?.emoji || 'Music',
           },
           $setOnInsert: { title: albumName },
         },
@@ -369,7 +391,7 @@ router.post('/albums/:album/cover', authMiddleware, upload.single('cover'), asyn
       ),
     ])
 
-    res.json({ message: 'Album cover updated successfully', album: albumName, coverUrl })
+    res.json({ message: 'Album cover updated successfully', album: albumName, coverUrl: normalizeMediaUrl(req, coverUrl) })
   } catch (error) {
     res.status(error.status || 500).json({ message: error.message })
   }
@@ -433,7 +455,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
       await removeAlbumIfUnused(previousAlbum)
     }
 
-    res.json({ message: 'Song updated successfully', song })
+    res.json({ message: 'Song updated successfully', song: withMediaFlags(req, song.toObject()) })
   } catch (error) {
     res.status(500).json({ message: error.message })
   }
