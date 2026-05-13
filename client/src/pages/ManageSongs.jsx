@@ -456,7 +456,7 @@ export default function ManageSongs() {
     }
   }
 
-  const replaceSongMedia = async (songId, event, field) => {
+  const replaceSongMedia = async (songId, songTitle, event, field) => {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.size) {
@@ -468,6 +468,7 @@ export default function ManageSongs() {
     try {
       setReplacingSongId(songId)
       const formData = new FormData()
+      formData.append('title', songTitle)
       formData.append(field, file)
 
       await api.put(`/api/songs/${songId}/media`, formData, {
@@ -686,7 +687,7 @@ export default function ManageSongs() {
                             type="file"
                             accept=".mp3,.wav,.ogg,.m4a"
                             style={{ display: 'none' }}
-                            onChange={(event) => replaceSongMedia(song._id, event, 'audio')}
+                            onChange={(event) => replaceSongMedia(song._id, song.title, event, 'audio')}
                             disabled={replacingSongId === song._id}
                           />
                         </label>

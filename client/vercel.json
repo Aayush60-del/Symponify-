@@ -6,6 +6,10 @@
       "destination": "https://symponify.onrender.com/api/:path*"
     },
     {
+      "source": "/songs/:path*",
+      "destination": "https://symponify.onrender.com/songs/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
