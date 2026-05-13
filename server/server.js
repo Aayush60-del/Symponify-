@@ -1,7 +1,5 @@
 const express = require('express')
 const cors = require('cors')
-const fs = require('fs')
-const path = require('path')
 require('dotenv').config()
 
 const connectDB = require('./config/db')
@@ -10,58 +8,28 @@ const app = express()
 connectDB()
 app.set('trust proxy', 1)
 
-const mediaRoot = path.join(__dirname, 'public/songs')
-const legacyMediaRoot = path.join(__dirname, '../Songs')
-const legacyMediaAliases = {
-  'ambarsaria/cover.webp': path.join(legacyMediaRoot, 'Ambarsaria Lyrics Navaan Sandhu ft Homeboy Kaater The Finest 2024.webp'),
-  'ambarsaria/audio.mp3': path.join(legacyMediaRoot, 'Ambarsaria - Navaan Sandhu.mp3'),
-  'billi jeans/cover.webp': path.join(mediaRoot, 'Billie Jean', 'cover.webp'),
-  'billi jeans/audio.mp3': path.join(mediaRoot, 'Billie Jean', 'audio.mp3'),
-}
 
-const resolveCaseInsensitivePath = (rootDir, relativePath) => {
-  const cleanSegments = relativePath.split('/').filter(Boolean)
-  let currentDir = rootDir
-
-  for (const segment of cleanSegments) {
-    if (!fs.existsSync(currentDir) || !fs.statSync(currentDir).isDirectory()) return ''
-
-    const nextEntry = fs.readdirSync(currentDir).find((entry) => entry.toLowerCase() === segment.toLowerCase())
-    if (!nextEntry) return ''
-
-    currentDir = path.join(currentDir, nextEntry)
-  }
-
-  return currentDir
-}
-
-const tryServeLegacyMedia = (req, res, next) => {
-  const requestedPath = decodeURIComponent(req.path).replace(/^\/+/, '')
-  const aliasPath = legacyMediaAliases[requestedPath.toLowerCase()]
-
-  if (aliasPath && fs.existsSync(aliasPath)) {
-    res.sendFile(aliasPath)
-    return
-  }
-
-  const resolvedPath = resolveCaseInsensitivePath(mediaRoot, requestedPath)
-  if (resolvedPath && fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile()) {
-    res.sendFile(resolvedPath)
-    return
-  }
-
-  next()
-}
-
-const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean)
 
+app.use((req, _res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`)
+  next()
+})
+
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.setHeader('X-Frame-Options', 'DENY')
+  next()
+})
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || !allowedOrigins.length || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true)
         return
       }
@@ -71,17 +39,19 @@ app.use(
     credentials: true,
   })
 )
-app.use(express.json())
-app.get("/", (req, res) => {
-  res.send("Symponify Backend Running 🚀")
+
+app.use(express.json({ limit: '1mb' }))
+
+app.get('/', (_req, res) => {
+  res.send('Symponify Backend Running')
 })
-app.use('/songs', express.static(mediaRoot))
-app.use('/songs', tryServeLegacyMedia)
+
+// All media is now served via Cloudinary URLs stored in MongoDB
+// No local file serving is performed
 
 
-
-app.get('/api/health', (_, res) => {
-  res.json({ ok: true })
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, uptime: process.uptime() })
 })
 
 app.use('/api/auth', require('./routes/auth'))

@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const mongoose = require('mongoose')
+const Album = require('./models/Album')
 const Song = require('./models/Song')
 
 const songs = [
@@ -10,8 +11,10 @@ const songs = [
     album: 'After Hours',
     duration: '3:20',
     genre: 'Pop',
-    emoji: '🎸',
+    emoji: '\uD83C\uDFB8',
     color: 'linear-gradient(135deg, #ff5c35, #f0a500)',
+    coverUrl: '/songs/After%20Hours/cover.jpg',
+    audioUrl: '/songs/Blinding%20lights/audio.mp3',
   },
   {
     title: 'Levitating',
@@ -19,17 +22,10 @@ const songs = [
     album: 'Future Nostalgia',
     duration: '3:23',
     genre: 'Pop',
-    emoji: '🪩',
+    emoji: '\uD83C\uDFA4',
     color: 'linear-gradient(135deg, #1a3c5e, #4a90d9)',
-  },
-  {
-    title: 'Shape of You',
-    artist: 'Ed Sheeran',
-    album: 'Divide',
-    duration: '3:53',
-    genre: 'Pop',
-    emoji: '🔥',
-    color: 'linear-gradient(135deg, #ff5c35, #ff8c00)',
+    coverUrl: '/songs/Future%20Nostalgia/cover.jpg',
+    audioUrl: '/songs/Levitating/audio.mp3',
   },
   {
     title: 'Anti-Hero',
@@ -37,8 +33,10 @@ const songs = [
     album: 'Midnights',
     duration: '3:20',
     genre: 'Pop',
-    emoji: '🌸',
+    emoji: '\u2728',
     color: 'linear-gradient(135deg, #7b2d8b, #c77dff)',
+    coverUrl: '/songs/Midnights/cover.jpg',
+    audioUrl: '/songs/AntiHero/audio.mp3',
   },
   {
     title: 'Watermelon Sugar',
@@ -46,44 +44,50 @@ const songs = [
     album: 'Fine Line',
     duration: '2:54',
     genre: 'Pop',
-    emoji: '🍉',
+    emoji: '\uD83C\uDF49',
     color: 'linear-gradient(135deg, #2d6a4f, #74c69d)',
+    coverUrl: '/songs/Fine%20Line/cover.jpg',
+    audioUrl: '/songs/Watermelon%20Sugar/audio.mp3',
+  },
+]
+
+const albums = [
+  {
+    title: 'After Hours',
+    artist: 'The Weeknd',
+    emoji: '\uD83C\uDFB8',
+    color: 'linear-gradient(135deg, #ff5c35, #f0a500)',
+    coverUrl: '/songs/After%20Hours/cover.jpg',
   },
   {
-    title: 'Midnight Jazz',
-    artist: 'The Quartet',
-    album: 'Jazz Nights',
-    duration: '4:12',
-    genre: 'Jazz',
-    emoji: '🎺',
-    color: 'linear-gradient(135deg, #1a1a1a, #555)',
+    title: 'Future Nostalgia',
+    artist: 'Dua Lipa',
+    emoji: '\uD83C\uDFA4',
+    color: 'linear-gradient(135deg, #1a3c5e, #4a90d9)',
+    coverUrl: '/songs/Future%20Nostalgia/cover.jpg',
   },
   {
-    title: 'Neon Dreams',
-    artist: 'RetroFuture',
-    album: 'Electric Dreams',
-    duration: '3:45',
-    genre: 'Electronic',
-    emoji: '🌌',
-    color: 'linear-gradient(135deg, #0d1b3e, #3d1a6e)',
+    title: 'Midnights',
+    artist: 'Taylor Swift',
+    emoji: '\u2728',
+    color: 'linear-gradient(135deg, #7b2d8b, #c77dff)',
+    coverUrl: '/songs/Midnights/cover.jpg',
   },
   {
-    title: 'Deep Sea',
-    artist: 'Marina',
-    album: 'Ocean',
-    duration: '3:30',
-    genre: 'Chill',
-    emoji: '🌊',
-    color: 'linear-gradient(135deg, #0d3b5e, #2196f3)',
+    title: 'Fine Line',
+    artist: 'Harry Styles',
+    emoji: '\uD83C\uDF49',
+    color: 'linear-gradient(135deg, #2d6a4f, #74c69d)',
+    coverUrl: '/songs/Fine%20Line/cover.jpg',
   },
 ]
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
-    await Song.deleteMany({})
-    await Song.insertMany(songs)
-    console.log('Seeded songs successfully')
+    await Promise.all([Song.deleteMany({}), Album.deleteMany({})])
+    await Promise.all([Song.insertMany(songs), Album.insertMany(albums)])
+    console.log('Seeded songs and albums successfully')
     process.exit(0)
   })
   .catch((error) => {

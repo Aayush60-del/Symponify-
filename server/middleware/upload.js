@@ -1,33 +1,53 @@
-const fs = require('fs')
 const path = require('path')
 const multer = require('multer')
+const { CloudinaryStorage } = require('multer-storage-cloudinary')
+const { cloudinary, ensureCloudinaryConfigured } = require('../config/cloudinary')
+const { sanitizeSongTitle } = require('../utils/validation')
 
-const sanitizeSongTitle = (value) => {
-  const cleaned = value ? value.replace(/[^a-zA-Z0-9 ]/g, '').trim() : ''
-  return cleaned || 'unknown'
+/**
+ * Determines the folder path in Cloudinary based on the file type.
+ * Audio files go to symponify/audio, images go to symponify/covers.
+ * @param {Object} file - Multer file object
+ * @returns {string} Cloudinary folder path
+ */
+const getUploadFolder = (file) => {
+  if (file.fieldname === 'audio') return 'symponify/audio'
+  return 'symponify/covers'
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const songTitle = sanitizeSongTitle(req.body.title)
-    const dir = path.join(__dirname, '../public/songs', songTitle)
+/**
+ * Cloudinary storage configuration for Multer.
+ * Uploads files directly to Cloudinary with proper public IDs and resource types.
+ */
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => {
+    ensureCloudinaryConfigured()
 
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true })
+    const title = sanitizeSongTitle(req.body.title || 'untitled')
+    const suffix = file.fieldname === 'audio' ? 'audio' : 'cover'
+
+    return {
+      folder: getUploadFolder(file),
+      // Public ID format: {title}-{type}-{timestamp} for uniqueness
+      public_id: `${title}-${suffix}-${Date.now()}`,
+      // Use 'auto' for audio files to automatically detect format
+      resource_type: 'auto',
+      use_filename: false,
+      unique_filename: true,
+      overwrite: false,
     }
-
-    cb(null, dir)
-  },
-  filename: (_req, file, cb) => {
-    if (file.fieldname === 'audio') {
-      cb(null, `audio${path.extname(file.originalname).toLowerCase()}`)
-      return
-    }
-
-    cb(null, `cover${path.extname(file.originalname).toLowerCase()}`)
   },
 })
 
+/**
+ * Validates file types based on field name.
+ * Audio: MP3, WAV, OGG, M4A
+ * Images: JPG, PNG, WEBP
+ * @param {Object} req - Express request
+ * @param {Object} file - Multer file object
+ * @param {Function} cb - Callback function
+ */
 const fileFilter = (_req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase()
 
@@ -51,8 +71,14 @@ const fileFilter = (_req, file, cb) => {
   cb(new Error('Only JPG, PNG, and WEBP image files are allowed.'))
 }
 
+/**
+ * Multer instance configured for Cloudinary upload.
+ * Handles both audio files (up to 50MB) and image files (up to 50MB).
+ * Files are stored on Cloudinary, not on the local filesystem.
+ */
 module.exports = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB limit
 })
+

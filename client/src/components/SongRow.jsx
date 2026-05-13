@@ -1,14 +1,13 @@
 import { FiHeart, FiPlay, FiVolume2 } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+import CoverArt from './CoverArt'
 
 export default function SongRow({ song, index, onPlay }) {
   const { currentTrack, isLiked, isPlaying, playSong, toggleLike } = usePlayer()
   const { isXs, isMobile, isTabletOrBelow } = useViewport()
   const active = currentTrack?._id === song._id
   const liked = isLiked(song._id)
-  const hasCover = Boolean(song.coverUrl)
-
   const rowStyle = {
     ...styles.row,
     background: active ? 'rgba(255, 92, 53, 0.08)' : 'rgba(255,255,255,0.74)',
@@ -22,9 +21,13 @@ export default function SongRow({ song, index, onPlay }) {
   return (
     <div style={rowStyle} onClick={() => (onPlay ? onPlay(song) : playSong(song))}>
       {!isMobile ? <div style={styles.index}>{active && isPlaying ? <FiVolume2 size={14} /> : String(index).padStart(2, '0')}</div> : null}
-      <div style={{ ...styles.cover, background: hasCover ? 'var(--surface-2)' : song.color || 'var(--surface-2)', gridRow: isMobile ? '1 / span 2' : 'auto' }}>
-        {hasCover ? <img src={song.coverUrl} alt={`${song.title} cover`} style={styles.coverImage} /> : song.emoji || <FiPlay />}
-      </div>
+      <CoverArt
+        src={song.coverUrl}
+        alt={`${song.title} cover`}
+        containerStyle={{ ...styles.cover, background: song.coverUrl ? 'var(--surface-2)' : song.color || 'var(--surface-2)', gridRow: isMobile ? '1 / span 2' : 'auto' }}
+        imgStyle={styles.coverImage}
+        fallback={song.emoji || <FiPlay />}
+      />
       <div style={{ ...styles.info, gridColumn: isMobile ? '2 / 3' : 'auto' }}>
         <div style={{ ...styles.title, color: active ? 'var(--accent)' : 'var(--text)' }}>{song.title}</div>
         <div style={{ ...styles.sub, whiteSpace: isMobile ? 'normal' : styles.sub.whiteSpace }}>{song.subtitle || `${song.artist} - ${song.duration || '3:20'}`}</div>

@@ -31,6 +31,10 @@ export function PlayerProvider({ children }) {
   const [repeatMode, setRepeatMode] = useState('off')
   const [likedSongs, setLikedSongs] = useState([])
   const [user, setUserState] = useState(readStoredUser)
+  const [volume, setVolumeState] = useState(() => {
+    const stored = Number(localStorage.getItem('playerVolume') || '70')
+    return Number.isFinite(stored) ? Math.max(0, Math.min(100, stored)) : 70
+  })
   const audioRef = useRef(typeof Audio !== 'undefined' ? new Audio() : null)
   const queueRef = useRef([])
   const currentIndexRef = useRef(-1)
@@ -128,6 +132,9 @@ export function PlayerProvider({ children }) {
     const audio = audioRef.current
     if (!audio) return undefined
 
+    audio.preload = 'metadata'
+    audio.volume = Math.max(0, Math.min(1, volume / 100))
+
     const handleTimeUpdate = () => {
       setProgress(audio.currentTime || 0)
     }
@@ -212,8 +219,19 @@ export function PlayerProvider({ children }) {
       audio.removeEventListener('pause', handlePause)
       audio.removeEventListener('error', handleError)
       audio.removeEventListener('ended', handleEnded)
+      audio.pause()
+      audio.removeAttribute('src')
+      audio.load()
     }
   }, [])
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = Math.max(0, Math.min(1, volume / 100))
+    }
+
+    localStorage.setItem('playerVolume', String(volume))
+  }, [volume])
 
   useEffect(() => {
     const fetchLikedSongs = async () => {
@@ -342,9 +360,7 @@ export function PlayerProvider({ children }) {
   }
 
   const setVolume = (value) => {
-    if (audioRef.current) {
-      audioRef.current.volume = Math.max(0, Math.min(1, value / 100))
-    }
+    setVolumeState(Math.max(0, Math.min(100, value)))
   }
 
   const playNext = async () => {
@@ -452,6 +468,7 @@ export function PlayerProvider({ children }) {
     liked: isLiked(currentSong?._id),
     playbackError,
     user,
+    volume,
     playSong,
     playTrack: playSong,
     setQueue,

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import api from '../lib/api'
 import { useSearchParams } from 'react-router-dom'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+import api from '../lib/api'
 
 const initialForm = {
   title: '',
@@ -10,12 +10,12 @@ const initialForm = {
   album: '',
   duration: '',
   genre: '',
-  emoji: '🎵',
+  emoji: '\uD83C\uDFB5',
   color: 'linear-gradient(135deg,#FF5C35,#F0A500)',
 }
 
 const genres = ['Pop', 'Rock', 'Jazz', 'Bollywood', 'Electronic', 'Chill', 'Hip-Hop', 'Classical']
-const emojis = ['🎸', '🎤', '🎹', '🥁', '🎺', '🎻', '🌊', '🔥', '🌸', '🌿', '🌌', '✨']
+const emojis = ['\uD83C\uDFB8', '\uD83C\uDFA4', '\uD83C\uDFB9', '\uD83E\uDD41', '\uD83C\uDFAA', '\uD83C\uDFBB', '\uD83C\uDF0A', '\uD83D\uDD25', '\uD83C\uDF38', '\uD83C\uDF3F', '\uD83C\uDF0C', '\u2728']
 const colors = [
   'linear-gradient(135deg,#FF5C35,#F0A500)',
   'linear-gradient(135deg,#1a3c5e,#4a90d9)',
@@ -289,6 +289,7 @@ export default function AddSong() {
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState({ text: '', type: '' })
+  const [albumsLoading, setAlbumsLoading] = useState(true)
   const audioRef = useRef(null)
   const coverRef = useRef(null)
   const { isCompact, isMobile: isPhone, isWide } = useViewport()
@@ -299,6 +300,7 @@ export default function AddSong() {
       .get('/api/songs/albums')
       .then((response) => setAlbums(response.data))
       .catch(() => setAlbums([]))
+      .finally(() => setAlbumsLoading(false))
   }, [])
 
   useEffect(() => {
@@ -354,7 +356,7 @@ export default function AddSong() {
     const file = event.target.files?.[0]
     if (!file) return
     if (!file.size) {
-      setMessage({ text: 'The selected audio file is empty. Choose a valid MP3 or WAV file.', type: 'error' })
+      setMessage({ text: 'The selected audio file is empty. Choose a valid audio file.', type: 'error' })
       if (audioRef.current) audioRef.current.value = ''
       return
     }
@@ -368,6 +370,9 @@ export default function AddSong() {
       const minutes = Math.floor(previewAudio.duration / 60)
       const seconds = Math.floor(previewAudio.duration % 60)
       setForm((prev) => ({ ...prev, duration: `${minutes}:${seconds.toString().padStart(2, '0')}` }))
+      URL.revokeObjectURL(previewAudio.src)
+    }
+    previewAudio.onerror = () => {
       URL.revokeObjectURL(previewAudio.src)
     }
   }
@@ -469,12 +474,7 @@ export default function AddSong() {
       }}
       className="scrollbar-hidden"
     >
-      <section
-        style={{
-          ...styles.hero,
-          padding: isPhone ? '20px' : styles.hero.padding,
-        }}
-      >
+      <section style={{ ...styles.hero, padding: isPhone ? '20px' : styles.hero.padding }}>
         <div style={styles.eyebrow}>Admin Tools</div>
         <h1 style={{ ...styles.title, fontSize: isPhone ? '28px' : styles.title.fontSize }}>Upload a new song</h1>
         <div style={styles.heroMeta}>
@@ -507,18 +507,8 @@ export default function AddSong() {
           </div>
         ) : null}
 
-        <div
-          style={{
-            ...styles.uploadRow,
-            gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.uploadRow.gridTemplateColumns,
-          }}
-        >
-          <div
-            style={{
-              ...styles.uploadSection,
-              gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.uploadSection.gridTemplateColumns,
-            }}
-          >
+        <div style={{ ...styles.uploadRow, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.uploadRow.gridTemplateColumns }}>
+          <div style={{ ...styles.uploadSection, gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.uploadSection.gridTemplateColumns }}>
             <button
               type="button"
               style={{
@@ -535,17 +525,12 @@ export default function AddSong() {
             </button>
             {audioFile ? (
               <button type="button" style={styles.uploadAction} onClick={resetAudio} aria-label="Remove audio">
-                x
+                X
               </button>
             ) : null}
           </div>
 
-          <div
-            style={{
-              ...styles.uploadSection,
-              gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.uploadSection.gridTemplateColumns,
-            }}
-          >
+          <div style={{ ...styles.uploadSection, gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.uploadSection.gridTemplateColumns }}>
             <button
               type="button"
               style={{
@@ -570,7 +555,7 @@ export default function AddSong() {
             </button>
             {coverFile ? (
               <button type="button" style={styles.uploadAction} onClick={resetCover} aria-label="Remove cover">
-                x
+                X
               </button>
             ) : null}
           </div>
@@ -585,12 +570,7 @@ export default function AddSong() {
           </div>
         ) : null}
 
-        <div
-          style={{
-            ...styles.grid,
-            gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.grid.gridTemplateColumns,
-          }}
-        >
+        <div style={{ ...styles.grid, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.grid.gridTemplateColumns }}>
           <div style={styles.field}>
             <label style={styles.label}>Song Title *</label>
             <input style={styles.input} name="title" placeholder="e.g. Tum Hi Ho" value={form.title} onChange={handleChange} />
@@ -631,9 +611,9 @@ export default function AddSong() {
                   setNewAlbumName('')
                 }
               }}
-              disabled={Boolean(newAlbumName.trim())}
+              disabled={Boolean(newAlbumName.trim()) || albumsLoading}
             >
-              <option value="">No album selected</option>
+              <option value="">{albumsLoading ? 'Loading albums...' : 'No album selected'}</option>
               {albums.map((album) => (
                 <option key={album.title} value={album.title}>
                   {album.title}
@@ -651,7 +631,7 @@ export default function AddSong() {
                 const value = event.target.value
                 setNewAlbumName(value)
                 setForm((prev) => ({ ...prev, album: value }))
-                if (event.target.value.trim()) {
+                if (value.trim()) {
                   setSelectedAlbum('')
                 }
               }}
@@ -700,14 +680,7 @@ export default function AddSong() {
 
         <div style={styles.field}>
           <label style={styles.label}>Preview</label>
-          <div
-            style={{
-              ...styles.preview,
-              background: form.color,
-              flexDirection: isPhone ? 'column' : 'row',
-              alignItems: isPhone ? 'flex-start' : styles.preview.alignItems,
-            }}
-          >
+          <div style={{ ...styles.preview, background: form.color, flexDirection: isPhone ? 'column' : 'row', alignItems: isPhone ? 'flex-start' : styles.preview.alignItems }}>
             {coverPreview ? <img src={coverPreview} alt="cover preview" style={styles.previewImage} /> : <span style={styles.previewEmoji}>{form.emoji}</span>}
             <div>
               <div style={styles.previewTitle}>{form.title || 'Song Title'}</div>
@@ -716,12 +689,7 @@ export default function AddSong() {
           </div>
         </div>
 
-        <div
-          style={{
-            ...styles.actions,
-            gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.actions.gridTemplateColumns,
-          }}
-        >
+        <div style={{ ...styles.actions, gridTemplateColumns: isPhone ? 'minmax(0, 1fr)' : styles.actions.gridTemplateColumns }}>
           <button style={{ ...styles.button, opacity: uploading ? 0.6 : 1 }} onClick={submit} disabled={uploading}>
             {uploading ? `Uploading... ${progress}%` : 'Upload Song'}
           </button>

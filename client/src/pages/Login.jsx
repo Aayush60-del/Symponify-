@@ -163,6 +163,8 @@ export default function Login() {
   const [tab, setTab] = useState('login')
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [adminSubmitting, setAdminSubmitting] = useState(false)
   const navigate = useNavigate()
   const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
@@ -191,12 +193,15 @@ export default function Login() {
     setError('')
 
     try {
+      setSubmitting(true)
       const endpoint = tab === 'login' ? '/api/auth/login' : '/api/auth/register'
       const payload = tab === 'login' ? { email: form.email, password: form.password } : form
       const { data } = await api.post(endpoint, payload)
       handleAuthSuccess(data)
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -210,6 +215,7 @@ export default function Login() {
     setTab('login')
 
     try {
+      setAdminSubmitting(true)
       const { data } = await api.post('/api/auth/admin-access', {
         email: form.email,
         password: form.password,
@@ -217,6 +223,8 @@ export default function Login() {
       handleAuthSuccess(data, '/add-song')
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong')
+    } finally {
+      setAdminSubmitting(false)
     }
   }
 
@@ -322,14 +330,14 @@ export default function Login() {
 
             {error ? <p style={styles.error}>{error}</p> : null}
 
-            <button type="submit" style={styles.button}>
-              {tab === 'login' ? 'Sign In ->' : 'Create Account ->'}
+            <button type="submit" style={styles.button} disabled={submitting || adminSubmitting}>
+              {submitting ? 'Please wait...' : tab === 'login' ? 'Sign In ->' : 'Create Account ->'}
             </button>
-            <button type="button" style={styles.secondaryButton} onClick={skipToApp}>
+            <button type="button" style={styles.secondaryButton} onClick={skipToApp} disabled={submitting || adminSubmitting}>
               Skip and Explore
             </button>
-            <button type="button" style={styles.secondaryButton} onClick={openAdminAccess}>
-              Admin Access
+            <button type="button" style={styles.secondaryButton} onClick={openAdminAccess} disabled={submitting || adminSubmitting}>
+              {adminSubmitting ? 'Checking access...' : 'Admin Access'}
             </button>
           </form>
           <p style={styles.hint}>Skip to browse as a guest, or use approved admin credentials for upload controls.</p>

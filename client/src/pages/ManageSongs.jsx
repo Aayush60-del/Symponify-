@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import api from '../lib/api'
 import { useNavigate } from 'react-router-dom'
 import { FiAlertCircle, FiEdit3, FiMusic, FiPlusCircle, FiSave, FiTrash2, FiUpload, FiX } from 'react-icons/fi'
+import CoverArt from '../components/CoverArt'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+import api from '../lib/api'
 
 const styles = {
   page: {
@@ -292,11 +293,15 @@ export default function ManageSongs() {
   const [changingAlbumCover, setChangingAlbumCover] = useState(false)
   const [replacingSongId, setReplacingSongId] = useState('')
   const [albumNameDraft, setAlbumNameDraft] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
 
   const token = localStorage.getItem('token')
 
   const loadData = async (preferredAlbum = '') => {
     try {
+      setLoading(true)
+      setLoadError('')
       const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
       const nextSongs = songsResponse.data
       const nextAlbums = albumsResponse.data
@@ -313,6 +318,9 @@ export default function ManageSongs() {
       setSongs([])
       setAlbums([])
       setSelectedAlbum('')
+      setLoadError('We could not load the song manager right now.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -403,7 +411,7 @@ export default function ManageSongs() {
       await loadData(data.album.title)
       setMessage({ text: 'Album created successfully. You can add songs and a cover later.', type: 'success' })
     } catch (error) {
-      setMessage({ text: error.response?.data?.message || 'Album create failed', type: 'error' })
+      setMessage({ text: error.response?.data?.message || 'Album creation failed', type: 'error' })
     } finally {
       setCreatingAlbum(false)
     }
@@ -603,13 +611,17 @@ export default function ManageSongs() {
             ) : null}
           </div>
 
-          {selectedAlbum ? (
+          {selectedAlbum && !loading && !loadError ? (
             <>
               <div style={{ ...styles.songCard, marginBottom: '16px' }}>
                 <div style={{ ...styles.songInfo, alignItems: 'center' }}>
-                  <div style={{ ...styles.art, width: '72px', height: '72px', borderRadius: '18px', background: selectedAlbumCover ? 'var(--surface-2)' : selectedAlbumData?.color || 'linear-gradient(135deg, #333, #666)', fontSize: '28px' }}>
-                    {selectedAlbumCover ? <img src={selectedAlbumCover} alt={`${selectedAlbum} cover`} style={styles.artImage} /> : selectedAlbumData?.emoji || <FiMusic />}
-                  </div>
+                  <CoverArt
+                    src={selectedAlbumCover}
+                    alt={`${selectedAlbum} cover`}
+                    containerStyle={{ ...styles.art, width: '72px', height: '72px', borderRadius: '18px', background: selectedAlbumCover ? 'var(--surface-2)' : selectedAlbumData?.color || 'linear-gradient(135deg, #333, #666)', fontSize: '28px' }}
+                    imgStyle={styles.artImage}
+                    fallback={selectedAlbumData?.emoji || <FiMusic />}
+                  />
                   <div>
                     <div style={styles.songName}>{selectedAlbum}</div>
                     <div style={styles.songSub}>
@@ -636,7 +648,11 @@ export default function ManageSongs() {
             </>
           ) : null}
 
-          {selectedAlbum ? (
+          {loading ? (
+            <div style={styles.empty}>Loading songs and albums...</div>
+          ) : loadError ? (
+            <div style={styles.empty}>{loadError}</div>
+          ) : selectedAlbum ? (
             visibleSongs.length ? (
               <div style={styles.songList}>
                 {visibleSongs.map((song) => {
@@ -645,24 +661,28 @@ export default function ManageSongs() {
                     <article key={song._id} style={styles.songCard}>
                       <div style={{ ...styles.songTop, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center' }}>
                         <div style={styles.songInfo}>
-                          <div style={{ ...styles.art, background: song.coverUrl ? 'var(--surface-2)' : song.color || 'linear-gradient(135deg, #333, #666)' }}>
-                          {song.coverUrl ? <img src={song.coverUrl} alt={`${song.title} cover`} style={styles.artImage} /> : song.emoji || <FiMusic />}
-                        </div>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={styles.songName}>{song.title}</div>
-                          <div style={styles.songSub}>
-                            {song.artist} • {song.duration || '0:00'} • {song.genre || 'No genre'}
-                          </div>
-                          {!song.audioReady ? (
-                            <div style={{ ...styles.songSub, color: '#c54d2b' }}>
-                              <FiAlertCircle style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-                              Audio file is missing or unavailable
+                          <CoverArt
+                            src={song.coverUrl}
+                            alt={`${song.title} cover`}
+                            containerStyle={{ ...styles.art, background: song.coverUrl ? 'var(--surface-2)' : song.color || 'linear-gradient(135deg, #333, #666)' }}
+                            imgStyle={styles.artImage}
+                            fallback={song.emoji || <FiMusic />}
+                          />
+                          <div style={{ minWidth: 0 }}>
+                            <div style={styles.songName}>{song.title}</div>
+                            <div style={styles.songSub}>
+                              {song.artist} | {song.duration || '0:00'} | {song.genre || 'No genre'}
                             </div>
-                          ) : null}
+                            {!song.audioReady ? (
+                              <div style={{ ...styles.songSub, color: '#c54d2b' }}>
+                                <FiAlertCircle style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                Audio file is missing or unavailable
+                              </div>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
 
-                      <div style={styles.controls}>
+                        <div style={styles.controls}>
                           {isEditing ? (
                             <>
                               <button type="button" style={styles.controlButton} onClick={() => saveSong(song._id)}>
@@ -674,26 +694,37 @@ export default function ManageSongs() {
                                 Cancel
                               </button>
                             </>
-                        ) : (
-                          <button type="button" style={styles.controlButton} onClick={() => startEdit(song)}>
+                          ) : (
+                            <button type="button" style={styles.controlButton} onClick={() => startEdit(song)}>
+                              <FiEdit3 />
+                              Update
+                            </button>
+                          )}
+                          <label style={styles.controlButton}>
+                            <FiUpload />
+                            {replacingSongId === song._id ? 'Uploading...' : 'Replace Audio'}
+                            <input
+                              type="file"
+                              accept=".mp3,.wav,.ogg,.m4a"
+                              style={{ display: 'none' }}
+                              onChange={(event) => replaceSongMedia(song._id, song.title, event, 'audio')}
+                              disabled={replacingSongId === song._id}
+                            />
+                          </label>
+                          <label style={styles.controlButton}>
                             <FiEdit3 />
-                            Update
-                          </button>
-                        )}
-                        <label style={styles.controlButton}>
-                          <FiUpload />
-                          {replacingSongId === song._id ? 'Uploading...' : 'Replace Audio'}
-                          <input
-                            type="file"
-                            accept=".mp3,.wav,.ogg,.m4a"
-                            style={{ display: 'none' }}
-                            onChange={(event) => replaceSongMedia(song._id, song.title, event, 'audio')}
-                            disabled={replacingSongId === song._id}
-                          />
-                        </label>
-                        <button type="button" style={{ ...styles.controlButton, ...styles.deleteButton }} onClick={() => setSongPendingDelete(song)}>
-                          <FiTrash2 />
-                          Delete
+                            {replacingSongId === song._id ? 'Uploading...' : 'Replace Cover'}
+                            <input
+                              type="file"
+                              accept=".jpg,.jpeg,.png,.webp"
+                              style={{ display: 'none' }}
+                              onChange={(event) => replaceSongMedia(song._id, song.title, event, 'cover')}
+                              disabled={replacingSongId === song._id}
+                            />
+                          </label>
+                          <button type="button" style={{ ...styles.controlButton, ...styles.deleteButton }} onClick={() => setSongPendingDelete(song)}>
+                            <FiTrash2 />
+                            Delete
                           </button>
                         </div>
                       </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FiHeart, FiPause, FiPlay, FiRepeat, FiShuffle, FiSkipBack, FiSkipForward, FiVolume2 } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+import CoverArt from './CoverArt'
 
 const formatSeconds = (value) => {
   if (!Number.isFinite(value) || value < 0) return '0:00'
@@ -135,6 +136,7 @@ export default function PlayerBar() {
     durationLabel,
     playbackError,
     seek,
+    volume,
     setVolume,
     toggleLike,
     togglePlay,
@@ -152,7 +154,6 @@ export default function PlayerBar() {
     emoji: null,
     color: 'linear-gradient(135deg, #ff5c35, #f0a500)',
   }
-  const hasCover = Boolean(track.coverUrl)
   const activeProgressPercent = isDragging ? dragPercent : progressPercent
   const activeProgressTime = isDragging ? (dragPercent / 100) * duration : progress
 
@@ -231,9 +232,13 @@ export default function PlayerBar() {
   return (
     <footer style={computedStyles.bar}>
       <div style={computedStyles.left}>
-        <div style={{ ...styles.cover, background: hasCover ? 'var(--surface-2)' : track.color || 'linear-gradient(135deg, #ff5c35, #f0a500)' }}>
-          {hasCover ? <img src={track.coverUrl} alt={`${track.title} cover`} style={styles.coverImage} /> : track.emoji || <FiPlay />}
-        </div>
+        <CoverArt
+          src={track.coverUrl}
+          alt={`${track.title} cover`}
+          containerStyle={{ ...styles.cover, background: track.coverUrl ? 'var(--surface-2)' : track.color || 'linear-gradient(135deg, #ff5c35, #f0a500)' }}
+          imgStyle={styles.coverImage}
+          fallback={track.emoji || <FiPlay />}
+        />
         <div style={computedStyles.leftMeta}>
           <div style={styles.title}>{track.title}</div>
           <div style={styles.artist}>{track.artist}</div>
@@ -288,7 +293,7 @@ export default function PlayerBar() {
 
       <div style={computedStyles.right}>
         <FiVolume2 color="var(--text-2)" style={{ flexShrink: 0 }} />
-        <input type="range" min="0" max="100" defaultValue="70" style={computedStyles.volume} onChange={(event) => setVolume(Number(event.target.value))} />
+        <input type="range" min="0" max="100" value={volume} style={computedStyles.volume} onChange={(event) => setVolume(Number(event.target.value))} />
       </div>
     </footer>
   )

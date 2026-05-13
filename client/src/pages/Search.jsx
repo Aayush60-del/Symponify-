@@ -146,6 +146,19 @@ export default function Search() {
   }, [genre, search])
 
   const topResult = useMemo(() => songs[0], [songs])
+  const visibleAlbums = useMemo(() => {
+    if (!albums.length) return []
+    if (genre === 'All' && !search.trim()) return albums
+
+    const songAlbumTitles = new Set(songs.map((song) => song.album?.trim()).filter(Boolean))
+    return albums.filter((album) => {
+      if (songAlbumTitles.has(album.title)) return true
+      if (!search.trim()) return false
+
+      const query = search.trim().toLowerCase()
+      return album.title.toLowerCase().includes(query) || (album.artist || '').toLowerCase().includes(query)
+    })
+  }, [albums, genre, search, songs])
 
   const updateSearch = (value) => {
     setSearch(value)
@@ -226,12 +239,14 @@ export default function Search() {
         <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Albums</h2>
         {loading ? (
           <div style={styles.empty}>Loading results...</div>
-        ) : (
+        ) : visibleAlbums.length ? (
           <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
-            {albums.map((album, index) => (
+            {visibleAlbums.map((album, index) => (
               <AlbumCard key={`${album.title}-${index}`} album={album} />
             ))}
           </div>
+        ) : (
+          <div style={styles.empty}>{error ? error : 'No albums matched your current search.'}</div>
         )}
       </section>
 

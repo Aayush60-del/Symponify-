@@ -1,11 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import useViewport from '../hooks/useViewport'
+import CoverArt from './CoverArt'
 
 export default function AlbumCard({ album, onSelect, active = false, onOpen }) {
   const navigate = useNavigate()
   const { isMobile, isWide } = useViewport()
-  const hasCover = Boolean(album.coverUrl)
-
   const handleClick = () => {
     if (onSelect) {
       onSelect(album)
@@ -22,16 +21,18 @@ export default function AlbumCard({ album, onSelect, active = false, onOpen }) {
 
   return (
     <button type="button" style={{ ...styles.card, opacity: active ? 1 : 0.96, padding: isMobile ? '2px' : 0, gap: isWide ? '0.5rem' : styles.card.gap }} onClick={handleClick}>
-      <div
-        style={{
+      <CoverArt
+        src={album.coverUrl}
+        alt={`${album.title} cover`}
+        containerStyle={{
           ...styles.art,
-          background: hasCover ? 'var(--surface-2)' : album.color || 'linear-gradient(135deg, #333, #666)',
+          background: album.coverUrl ? 'var(--surface-2)' : album.color || 'linear-gradient(135deg, #333, #666)',
           outline: active ? '3px solid rgba(255, 92, 53, 0.28)' : 'none',
           fontSize: isMobile ? '34px' : isWide ? '46px' : styles.art.fontSize,
         }}
-      >
-        {hasCover ? <img src={album.coverUrl} alt={`${album.title} cover`} style={styles.image} /> : album.emoji || 'Music'}
-      </div>
+        imgStyle={styles.image}
+        fallback={album.emoji || 'Music'}
+      />
       <div style={styles.title}>{album.title}</div>
       <div style={styles.artist}>{album.artist || 'Symponify Radio'}</div>
     </button>
