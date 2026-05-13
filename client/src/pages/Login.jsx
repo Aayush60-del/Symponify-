@@ -200,6 +200,11 @@ export default function Login() {
     }
   }
 
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    await submit()
+  }
+
   const openAdminAccess = async () => {
     setError('')
     setTab('login')
@@ -258,71 +263,75 @@ export default function Login() {
           </div>
           <p style={styles.subtitle}>Your music, beautifully organized.</p>
 
-          <div style={styles.tabs}>
-            <button
-              style={{
-                ...styles.tab,
-                background: tab === 'login' ? 'var(--text)' : 'transparent',
-                color: tab === 'login' ? '#fff' : 'var(--text-2)',
-              }}
-              onClick={() => setTab('login')}
-            >
-              Sign In
-            </button>
-            <button
-              style={{
-                ...styles.tab,
-                background: tab === 'signup' ? 'var(--text)' : 'transparent',
-                color: tab === 'signup' ? '#fff' : 'var(--text-2)',
-              }}
-              onClick={() => setTab('signup')}
-            >
-              Sign Up
-            </button>
-          </div>
-
-          {tab === 'signup' ? (
-            <div style={styles.field}>
-              <label style={styles.label}>Full Name</label>
-              <input style={styles.input} name="name" placeholder="Your name" value={form.name} onChange={handleChange} />
+          <form onSubmit={handleSubmit}>
+            <div style={styles.tabs}>
+              <button
+                type="button"
+                style={{
+                  ...styles.tab,
+                  background: tab === 'login' ? 'var(--text)' : 'transparent',
+                  color: tab === 'login' ? '#fff' : 'var(--text-2)',
+                }}
+                onClick={() => setTab('login')}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                style={{
+                  ...styles.tab,
+                  background: tab === 'signup' ? 'var(--text)' : 'transparent',
+                  color: tab === 'signup' ? '#fff' : 'var(--text-2)',
+                }}
+                onClick={() => setTab('signup')}
+              >
+                Sign Up
+              </button>
             </div>
-          ) : null}
 
-          <div style={styles.field}>
-            <label style={styles.label}>Email</label>
-            <input
-              style={styles.input}
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
+            {tab === 'signup' ? (
+              <div style={styles.field}>
+                <label style={styles.label}>Full Name</label>
+                <input style={styles.input} name="name" placeholder="Your name" value={form.name} onChange={handleChange} />
+              </div>
+            ) : null}
 
-          <div style={styles.field}>
-            <label style={styles.label}>Password</label>
-            <input
-              style={styles.input}
-              name="password"
-              type="password"
-              placeholder="........"
-              value={form.password}
-              onChange={handleChange}
-            />
-          </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Email</label>
+              <input
+                style={styles.input}
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                value={form.email}
+                onChange={handleChange}
+              />
+            </div>
 
-          {error ? <p style={styles.error}>{error}</p> : null}
+            <div style={styles.field}>
+              <label style={styles.label}>Password</label>
+              <input
+                style={styles.input}
+                name="password"
+                type="password"
+                placeholder="........"
+                value={form.password}
+                onChange={handleChange}
+              />
+            </div>
 
-          <button style={styles.button} onClick={submit}>
-            {tab === 'login' ? 'Sign In ->' : 'Create Account ->'}
-          </button>
-          <button style={styles.secondaryButton} onClick={skipToApp}>
-            Skip and Explore
-          </button>
-          <button style={styles.secondaryButton} onClick={openAdminAccess}>
-            Admin Access
-          </button>
+            {error ? <p style={styles.error}>{error}</p> : null}
+
+            <button type="submit" style={styles.button}>
+              {tab === 'login' ? 'Sign In ->' : 'Create Account ->'}
+            </button>
+            <button type="button" style={styles.secondaryButton} onClick={skipToApp}>
+              Skip and Explore
+            </button>
+            <button type="button" style={styles.secondaryButton} onClick={openAdminAccess}>
+              Admin Access
+            </button>
+          </form>
           <p style={styles.hint}>Skip to browse as a guest, or use approved admin credentials for upload controls.</p>
         </section>
       </div>

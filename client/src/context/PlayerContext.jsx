@@ -228,7 +228,13 @@ export function PlayerProvider({ children }) {
           headers: { Authorization: `Bearer ${token}` },
         })
         setLikedSongs(data)
-      } catch {
+      } catch (error) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          setUserState(null)
+          window.dispatchEvent(new Event('authchange'))
+        }
         setLikedSongs([])
       }
     }
