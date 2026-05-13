@@ -12,9 +12,8 @@ const sanitizeSongTitle = (value) => {
   return cleaned || 'unknown'
 }
 
-const buildMediaUrl = (req, folderName, filename) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`
-  return `${baseUrl}/songs/${encodeURIComponent(sanitizeSongTitle(folderName))}/${filename}`
+const buildMediaUrl = (_req, folderName, filename) => {
+  return `/songs/${encodeURIComponent(sanitizeSongTitle(folderName))}/${filename}`
 }
 
 const getMediaRelativePath = (mediaUrl) => {
@@ -35,7 +34,7 @@ const getLocalMediaPath = (mediaUrl) => {
   return relativePath ? path.join(__dirname, '../public/songs', relativePath) : ''
 }
 
-const normalizeMediaUrl = (req, mediaUrl) => {
+const normalizeMediaUrl = (_req, mediaUrl) => {
   const relativePath = getMediaRelativePath(mediaUrl)
   if (!relativePath) return mediaUrl || ''
 
@@ -44,7 +43,7 @@ const normalizeMediaUrl = (req, mediaUrl) => {
 
   const filename = parts.pop()
   const folderName = parts.join('/')
-  return buildMediaUrl(req, folderName, filename)
+  return buildMediaUrl(null, folderName, filename)
 }
 
 const withMediaFlags = (req, song) => {
