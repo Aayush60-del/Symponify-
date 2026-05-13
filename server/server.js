@@ -36,7 +36,7 @@ const resolveCaseInsensitivePath = (rootDir, relativePath) => {
 }
 
 const tryServeLegacyMedia = (req, res, next) => {
-  const requestedPath = req.path.replace(/^\/+/, '')
+  const requestedPath = decodeURIComponent(req.path).replace(/^\/+/, '')
   const aliasPath = legacyMediaAliases[requestedPath.toLowerCase()]
 
   if (aliasPath && fs.existsSync(aliasPath)) {
