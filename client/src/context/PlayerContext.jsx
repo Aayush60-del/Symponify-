@@ -115,6 +115,16 @@ export function PlayerProvider({ children }) {
       setUserState(nextUser)
 
       if (!localStorage.getItem('token')) {
+        // Stop audio on logout
+        if (audioRef.current) {
+          audioRef.current.pause()
+          audioRef.current.currentTime = 0
+          audioRef.current.removeAttribute('src')
+        }
+        setPlaying(false)
+        setCurrentSong(null)
+        setQueue([])
+        setCurrentIndex(-1)
         setLikedSongs([])
       }
     }
