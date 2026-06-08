@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FiAlertCircle, FiEdit3, FiMusic, FiPlusCircle, FiSave, FiTrash2, FiUpload, FiX } from 'react-icons/fi'
+import api from '../lib/api'
 import CoverArt from '../components/CoverArt'
+import Loader from '../components/Loader'
 import { usePlayer } from '../context/PlayerContext'
 import { adminSongsService, albumsService, songsService } from '../lib/services'
 import { useToast } from '../context/ToastContext'
 import useViewport from '../hooks/useViewport'
+
+const Icon = ({ name, size = 18, style: extraStyle }) => (
+  <span className="material-symbols-rounded" style={{ fontSize: size, lineHeight: 1, ...extraStyle }}>{name}</span>
+)
 
 const styles = {
   page: {
@@ -570,7 +575,7 @@ export default function ManageSongs() {
             </div>
             <div style={{ ...styles.controls, marginTop: '12px' }}>
               <button type="button" style={{ ...styles.controlButton, ...styles.primaryButton }} onClick={createAlbum} disabled={creatingAlbum}>
-                <FiPlusCircle />
+                <Icon name="add_circle" />
                 {creatingAlbum ? 'Creating...' : 'Create Album'}
               </button>
             </div>
@@ -611,12 +616,12 @@ export default function ManageSongs() {
             </div>
             {selectedAlbum ? (
               <div style={styles.controls}>
-                <button type="button" style={{ ...styles.controlButton, ...styles.primaryButton }} onClick={() => navigate(`/add-song?album=${encodeURIComponent(selectedAlbum)}`)}>
-                  <FiPlusCircle />
+                <button type="button" style={{ ...styles.controlButton, ...styles.primaryButton }} onClick={() => navigate(`/home/add-song?album=${encodeURIComponent(selectedAlbum)}`)}>
+                  <Icon name="add_circle" />
                   Add Song
                 </button>
                 <label style={styles.controlButton}>
-                  <FiEdit3 />
+                  <Icon name="edit" />
                   {changingAlbumCover ? 'Updating...' : 'Change Cover'}
                   <input type="file" accept=".jpg,.jpeg,.png,.webp" style={{ display: 'none' }} onChange={changeAlbumCover} disabled={changingAlbumCover} />
                 </label>
@@ -633,7 +638,7 @@ export default function ManageSongs() {
                     alt={`${selectedAlbum} cover`}
                     containerStyle={{ ...styles.art, width: '72px', height: '72px', borderRadius: '18px', background: selectedAlbumCover ? 'var(--surface-2)' : selectedAlbumData?.color || 'linear-gradient(135deg, #333, #666)', fontSize: '28px' }}
                     imgStyle={styles.artImage}
-                    fallback={selectedAlbumData?.emoji || <FiMusic />}
+                    fallback={selectedAlbumData?.emoji || <Icon name="music_note" size={22} />}
                   />
                   <div>
                     <div style={styles.songName}>{selectedAlbum}</div>
@@ -652,7 +657,7 @@ export default function ManageSongs() {
                   </div>
                   <div style={styles.controls}>
                     <button type="button" style={styles.controlButton} onClick={renameAlbum} disabled={!albumNameDraft.trim() || albumNameDraft.trim() === selectedAlbum}>
-                      <FiSave />
+                      <Icon name="save" />
                       Rename Album
                     </button>
                   </div>
@@ -662,7 +667,7 @@ export default function ManageSongs() {
           ) : null}
 
           {loading ? (
-            <div style={styles.empty}>Loading songs and albums...</div>
+            <Loader />
           ) : loadError ? (
             <div style={styles.empty}>{loadError}</div>
           ) : selectedAlbum ? (
@@ -679,7 +684,7 @@ export default function ManageSongs() {
                             alt={`${song.title} cover`}
                             containerStyle={{ ...styles.art, background: song.coverUrl ? 'var(--surface-2)' : song.color || 'linear-gradient(135deg, #333, #666)' }}
                             imgStyle={styles.artImage}
-                            fallback={song.emoji || <FiMusic />}
+                            fallback={song.emoji || <Icon name="music_note" size={22} />}
                           />
                           <div style={{ minWidth: 0 }}>
                             <div style={styles.songName}>{song.title}</div>
@@ -688,7 +693,7 @@ export default function ManageSongs() {
                             </div>
                             {!song.audioReady ? (
                               <div style={{ ...styles.songSub, color: '#c54d2b' }}>
-                                <FiAlertCircle style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+                                <Icon name="error" size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
                                 Audio file is missing or unavailable
                               </div>
                             ) : null}
@@ -699,22 +704,22 @@ export default function ManageSongs() {
                           {isEditing ? (
                             <>
                               <button type="button" style={styles.controlButton} onClick={() => saveSong(song._id)}>
-                                <FiSave />
+                                <Icon name="save" />
                                 Save
                               </button>
                               <button type="button" style={styles.controlButton} onClick={cancelEdit}>
-                                <FiX />
+                                <Icon name="close" />
                                 Cancel
                               </button>
                             </>
                           ) : (
                             <button type="button" style={styles.controlButton} onClick={() => startEdit(song)}>
-                              <FiEdit3 />
+                              <Icon name="edit" />
                               Update
                             </button>
                           )}
                           <label style={styles.controlButton}>
-                            <FiUpload />
+                            <Icon name="upload" />
                             {replacingSongId === song._id ? 'Uploading...' : 'Replace Audio'}
                             <input
                               type="file"
@@ -725,7 +730,7 @@ export default function ManageSongs() {
                             />
                           </label>
                           <label style={styles.controlButton}>
-                            <FiEdit3 />
+                            <Icon name="edit" />
                             {replacingSongId === song._id ? 'Uploading...' : 'Replace Cover'}
                             <input
                               type="file"
@@ -736,7 +741,7 @@ export default function ManageSongs() {
                             />
                           </label>
                           <button type="button" style={{ ...styles.controlButton, ...styles.deleteButton }} onClick={() => setSongPendingDelete(song)}>
-                            <FiTrash2 />
+                            <Icon name="delete" />
                             Delete
                           </button>
                         </div>
@@ -792,7 +797,7 @@ export default function ManageSongs() {
                 Cancel
               </button>
               <button type="button" style={{ ...styles.controlButton, ...styles.deleteButton }} onClick={() => deleteSong(songPendingDelete._id)}>
-                <FiTrash2 />
+                <Icon name="delete" />
                 Delete
               </button>
             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useToast } from '../context/ToastContext'
@@ -8,8 +8,13 @@ import { useReducedMotion } from '../lib/animation-utils'
 import AlbumCard from '../components/AlbumCard'
 import FeaturedCard from '../components/FeaturedCard'
 import SongRow from '../components/SongRow'
+import Loader from '../components/Loader'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+
+const Icon = ({ name, size = 20, style: extraStyle }) => (
+  <span className="material-symbols-rounded" style={{ fontSize: size, lineHeight: 1, ...extraStyle }}>{name}</span>
+)
 
 const featuredItems = [
   {
@@ -71,9 +76,34 @@ const styles = {
     gap: '14px',
   },
   albumRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(144px, 1fr))',
+    display: 'flex',
     gap: '16px',
+    overflowX: 'auto',
+    paddingBottom: '16px',
+    scrollSnapType: 'x mandatory',
+    scrollBehavior: 'smooth',
+  },
+  carouselWrap: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  scrollButton: {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: 'rgba(255,255,255,0.9)',
+    border: '1px solid rgba(0,0,0,0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    zIndex: 10,
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    color: 'var(--text)',
   },
   helper: {
     fontSize: '12px',
@@ -100,6 +130,17 @@ export default function Home() {
   const [selectedAlbum, setSelectedAlbum] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const carouselRef = useRef(null)
+  
+  const scrollCarousel = (direction) => {
+    if (carouselRef.current) {
+      const scrollAmount = isMobile ? 200 : 400
+      carouselRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      })
+    }
+  }
 
   useEffect(() => {
     let ignore = false
@@ -198,21 +239,46 @@ export default function Home() {
           </button>
         </div>
         {loading ? (
-          <div style={styles.empty}>Loading albums and songs...</div>
+          <Loader />
         ) : albums.length ? (
           <>
             <p style={styles.helper}>
               {selectedAlbum ? `${selectedAlbum} selected. Click again to clear the filter.` : 'Select an album to view its songs below.'}
             </p>
-            <div style={{ ...styles.albumRow, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
-              {albums.map((album, index) => (
-                <AlbumCard
-                  key={`${album.title}-${index}`}
-                  album={album}
-                  active={selectedAlbum === album.title}
-                  onSelect={handleAlbumSelect}
-                />
-              ))}
+            <div style={styles.carouselWrap}>
+              {!isMobile && (
+                <button 
+                  style={{ ...styles.scrollButton, left: '-20px' }} 
+                  onClick={() => scrollCarousel('left')}
+                  aria-label="Scroll left"
+                >
+                  <Icon name="chevron_left" size={24} />
+                </button>
+              )}
+              <div 
+                ref={carouselRef}
+                className="scrollbar-hidden" 
+                style={styles.albumRow}
+              >
+                {albums.map((album, index) => (
+                  <div key={`${album.title}-${index}`} style={{ flex: `0 0 ${isMobile ? '132px' : isWide ? '180px' : '144px'}`, scrollSnapAlign: 'start' }}>
+                    <AlbumCard
+                      album={album}
+                      active={selectedAlbum === album.title}
+                      onSelect={handleAlbumSelect}
+                    />
+                  </div>
+                ))}
+              </div>
+              {!isMobile && (
+                <button 
+                  style={{ ...styles.scrollButton, right: '-20px' }} 
+                  onClick={() => scrollCarousel('right')}
+                  aria-label="Scroll right"
+                >
+                  <Icon name="chevron_right" size={24} />
+                </button>
+              )}
             </div>
           </>
         ) : (

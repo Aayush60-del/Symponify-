@@ -7,6 +7,7 @@ import { pageVariants } from '../lib/animations'
 import { useReducedMotion } from '../lib/animation-utils'
 import AlbumCard from '../components/AlbumCard'
 import SongRow from '../components/SongRow'
+import Loader from '../components/Loader'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
 
@@ -253,7 +254,7 @@ export default function Search() {
       <section>
         <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '18px' : styles.sectionTitle.fontSize }}>Albums</h2>
         {loading ? (
-          <div style={styles.empty}>Loading results...</div>
+          <Loader />
         ) : visibleAlbums.length ? (
           <div style={{ ...styles.albumGrid, gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '132px' : isWide ? '180px' : '144px'}, 1fr))` }}>
             {visibleAlbums.map((album, index) => (

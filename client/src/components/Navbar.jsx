@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { FiBell, FiMenu, FiSearch, FiX } from 'react-icons/fi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useViewport from '../hooks/useViewport'
 
@@ -20,6 +19,10 @@ const notifications = [
     time: 'Today',
   },
 ]
+
+const Icon = ({ name, size = 20, style: extraStyle }) => (
+  <span className="material-symbols-rounded" style={{ fontSize: size, lineHeight: 1, ...extraStyle }}>{name}</span>
+)
 
 const styles = {
   bar: {
@@ -224,7 +227,7 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
         <div style={{ ...styles.titleWrap, flex: isTabletOrBelow ? '1 1 auto' : '0 0 auto', minWidth: 0 }}>
           {showMenuButton ? (
             <button type="button" style={{ ...styles.iconBtn, marginBottom: '10px', width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Open navigation menu" onClick={onMenuToggle}>
-              <FiMenu />
+              <Icon name="menu" size={24} />
             </button>
           ) : null}
           <span style={styles.eyebrow}>Warm Minimal Listening</span>
@@ -232,7 +235,7 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
         </div>
         <div style={computedStyles.right}>
           <div style={computedStyles.search}>
-            <FiSearch />
+            <Icon name="search" size={20} />
             <input
               style={styles.input}
               placeholder="Search songs, albums, artists"
@@ -246,10 +249,10 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
             />
           </div>
           <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Run search" onClick={submitSearch}>
-            <FiSearch />
+            <Icon name="search" size={20} />
           </button>
           <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Notifications" onClick={() => setShowNotifications(true)}>
-            <FiBell />
+            <Icon name="notifications" size={20} />
             <span style={styles.dot} />
           </button>
         </div>
@@ -262,7 +265,7 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
             <div style={styles.panelHeader}>
               <div style={styles.panelTitle}>Notifications</div>
               <button type="button" style={styles.closeButton} onClick={() => setShowNotifications(false)} aria-label="Close notification panel">
-                <FiX />
+                <Icon name="close" size={20} />
               </button>
             </div>
             <div style={styles.panelBody}>

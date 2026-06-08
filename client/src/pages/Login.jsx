@@ -271,11 +271,12 @@ export default function Login() {
       <div
         style={{
           ...styles.wrap,
-          gridTemplateColumns: isTabletOrBelow ? 'minmax(0, 1fr)' : styles.wrap.gridTemplateColumns,
+          gridTemplateColumns: isTabletOrBelow ? 'minmax(0, 1fr)' : '1.25fr 1fr',
           gap: isMobile ? '16px' : isWide ? '28px' : styles.wrap.gap,
+          alignItems: 'stretch',
         }}
       >
-        <section style={{ ...styles.hero, minHeight: isTabletOrBelow ? 'auto' : styles.hero.minHeight, padding: isMobile ? '24px' : styles.hero.padding, borderRadius: isMobile ? '28px' : styles.hero.borderRadius }}>
+        <section style={{ ...styles.hero, minHeight: isTabletOrBelow ? 'auto' : '520px', padding: isMobile ? '24px' : styles.hero.padding, borderRadius: isMobile ? '28px' : styles.hero.borderRadius }}>
           <div>
             <div style={styles.logo}>
               <span style={styles.dot} />

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import Loader from '../components/Loader'
 import { useToast } from '../context/ToastContext'
 import { songsService, albumsService } from '../lib/services'
 import { pageVariants } from '../lib/animations'
@@ -180,7 +181,7 @@ export default function Library() {
       </section>
 
       {loading ? (
-        <div style={styles.empty}>Loading your library...</div>
+        <Loader />
       ) : error ? (
         <div style={styles.empty}>{error}</div>
       ) : items.length ? (

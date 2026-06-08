@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
-import { FiHeart, FiPause, FiPlay, FiRepeat, FiShuffle, FiSkipBack, FiSkipForward, FiVolume2 } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
 import CoverArt from './CoverArt'
+
+const Icon = ({ name, size = 20, style: extraStyle, fill = false }) => (
+  <span className="material-symbols-rounded" style={{ fontSize: size, lineHeight: 1, fontVariationSettings: fill ? "'FILL' 1" : "'FILL' 0", ...extraStyle }}>{name}</span>
+)
 
 const formatSeconds = (value) => {
   if (!Number.isFinite(value) || value < 0) return '0:00'
@@ -243,38 +246,38 @@ export default function PlayerBar() {
           alt={`${track.title} cover`}
           containerStyle={{ ...styles.cover, background: track.coverUrl ? 'var(--surface-2)' : track.color || 'linear-gradient(135deg, #ff5c35, #f0a500)' }}
           imgStyle={styles.coverImage}
-          fallback={track.emoji || <FiPlay />}
+          fallback={track.emoji || <Icon name="play_arrow" size={24} />}
         />
         <div style={computedStyles.leftMeta}>
           <div style={styles.title}>{track.title}</div>
           <div style={styles.artist}>{track.artist}</div>
           {playbackError ? <div style={{ ...styles.artist, color: '#c54d2b' }}>{playbackError}</div> : null}
         </div>
-        <button style={{ ...styles.iconButton, width: isMobile ? '40px' : styles.iconButton.width, height: isMobile ? '40px' : styles.iconButton.height }} onClick={() => toggleLike(track)} aria-label="Like current track">
-          <FiHeart fill={liked ? 'currentColor' : 'none'} />
+        <button style={{ ...styles.iconButton, width: isMobile ? '40px' : styles.iconButton.width, height: isMobile ? '40px' : styles.iconButton.height, color: liked ? '#c9184a' : 'var(--text-2)' }} onClick={() => toggleLike(track)} aria-label="Like current track">
+          <Icon name="favorite" fill={liked} />
         </button>
       </div>
 
       <div style={computedStyles.center}>
         <div style={computedStyles.controls}>
           <button style={{ ...styles.iconButton, color: shuffle ? 'var(--accent)' : styles.iconButton.color }} aria-label="Shuffle" onClick={toggleShuffle}>
-            <FiShuffle />
+            <Icon name="shuffle" />
           </button>
           <button style={styles.iconButton} aria-label="Previous track" onClick={playPrevious}>
-            <FiSkipBack />
+            <Icon name="skip_previous" />
           </button>
           <button style={styles.play} onClick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
-            {isPlaying ? <FiPause /> : <FiPlay />}
+            {isPlaying ? <Icon name="pause" size={24} /> : <Icon name="play_arrow" size={24} />}
           </button>
           <button style={styles.iconButton} aria-label="Next track" onClick={playNext}>
-            <FiSkipForward />
+            <Icon name="skip_next" />
           </button>
           <button
             style={{ ...styles.iconButton, color: repeatMode === 'off' ? styles.iconButton.color : 'var(--accent)' }}
             aria-label={`Repeat mode ${repeatMode}`}
             onClick={cycleRepeatMode}
           >
-            <FiRepeat />
+            <Icon name="repeat" />
           </button>
         </div>
         <div style={computedStyles.progressRow}>
@@ -298,7 +301,7 @@ export default function PlayerBar() {
       </div>
 
       <div style={computedStyles.right}>
-        <FiVolume2 color="var(--text-2)" style={{ flexShrink: 0 }} />
+        <Icon name="volume_up" style={{ flexShrink: 0, color: 'var(--text-2)' }} />
         <input type="range" min="0" max="100" value={volume} style={computedStyles.volume} onChange={(event) => setVolume(Number(event.target.value))} />
       </div>
     </footer>

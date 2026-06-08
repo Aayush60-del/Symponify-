@@ -1,7 +1,10 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { FiDisc, FiEdit3, FiGrid, FiHeart, FiLogOut, FiPlusCircle, FiSearch, FiX } from 'react-icons/fi'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+
+const Icon = ({ name, size = 20, style: extraStyle }) => (
+  <span className="material-symbols-rounded" style={{ fontSize: size, lineHeight: 1, ...extraStyle }}>{name}</span>
+)
 
 const styles = {
   sidebar: {
@@ -104,10 +107,10 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
   const isGuest = localStorage.getItem('guestAccess') === 'true'
 
   const links = [
-    { to: '/', label: 'Home', icon: FiGrid, end: true },
-    { to: '/search', label: 'Search', icon: FiSearch },
-    { to: '/library', label: 'Library', icon: FiDisc },
-    { to: '/liked', label: 'Liked Songs', icon: FiHeart },
+    { to: '/home', label: 'Home', iconName: 'home', end: true },
+    { to: '/home/search', label: 'Search', iconName: 'search' },
+    { to: '/home/library', label: 'Library', iconName: 'library_music' },
+    { to: '/home/liked', label: 'Liked Songs', iconName: 'favorite' },
   ]
 
   const logout = () => {
@@ -148,14 +151,14 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
         </div>
         {isCompact ? (
           <button type="button" style={styles.closeButton} aria-label="Close menu" onClick={onClose}>
-            <FiX />
+            <Icon name="close" size={20} />
           </button>
         ) : null}
       </div>
 
       <div style={styles.section}>
         <span style={styles.sectionLabel}>Browse</span>
-        {links.map(({ to, label, icon: Icon, end }) => (
+        {links.map(({ to, label, iconName, end }) => (
           <NavLink
             key={to}
             to={to}
@@ -170,14 +173,14 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
               boxShadow: isActive ? '0 8px 20px rgba(26,26,24,0.15)' : 'none',
             })}
           >
-            <Icon size={18} />
+            <Icon name={iconName} size={18} />
             {label}
           </NavLink>
         ))}
         {user?.isAdmin ? (
           <>
             <NavLink
-              to="/add-song"
+              to="/home/add-song"
               onClick={() => {
                 if (isCompact) onClose?.()
               }}
@@ -190,11 +193,11 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
                 borderRadius: '999px',
               })}
             >
-              <FiPlusCircle size={18} />
+              <Icon name="add_circle" size={18} />
               Add Song
             </NavLink>
             <NavLink
-              to="/manage-songs"
+              to="/home/manage-songs"
               onClick={() => {
                 if (isCompact) onClose?.()
               }}
@@ -206,7 +209,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
                 borderRadius: '999px',
               })}
             >
-              <FiEdit3 size={18} />
+              <Icon name="edit_note" size={18} />
               Manage Songs
             </NavLink>
           </>
@@ -217,7 +220,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
         <div style={styles.ctaTitle}>Curated daily</div>
         <p style={styles.ctaText}>A bright mix of synth, soul, and intimate acoustic sessions picked for you.</p>
         <button style={{ ...styles.ctaButton, width: isMobile ? '100%' : 'auto' }} onClick={logout}>
-          <FiLogOut style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+          <Icon name="logout" size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
           {isGuest ? 'Exit Guest Mode' : 'Logout'}
         </button>
       </div>

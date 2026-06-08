@@ -88,7 +88,7 @@ export const songsService = {
     }
     
     if (query) {
-      return await this.search(query, 100)
+      return await songsService.search(query, 100)
     }
     
     const { data } = await api.get('/api/songs', {
