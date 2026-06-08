@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../lib/api'
+import { motion } from 'framer-motion'
+import { useToast } from '../context/ToastContext'
+import { songsService, albumsService } from '../lib/services'
+import { pageVariants } from '../lib/animations'
+import { useReducedMotion } from '../lib/animation-utils'
 import AlbumCard from '../components/AlbumCard'
 import FeaturedCard from '../components/FeaturedCard'
 import SongRow from '../components/SongRow'
@@ -87,6 +91,8 @@ const styles = {
 export default function Home() {
   const navigate = useNavigate()
   const { playSong } = usePlayer()
+  const { error: showError } = useToast()
+  const prefersReducedMotion = useReducedMotion()
   const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
@@ -101,15 +107,20 @@ export default function Home() {
       try {
         setLoading(true)
         setError('')
-        const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
+        const [songsData, albumsData] = await Promise.all([
+          songsService.getAll({ limit: 100 }),
+          albumsService.getAll(),
+        ])
         if (ignore) return
-        setSongs(songsResponse.data)
-        setAlbums(albumsResponse.data)
-      } catch {
+        setSongs(songsData)
+        setAlbums(albumsData)
+      } catch (err) {
         if (ignore) return
+        const errorMsg = 'Failed to load songs and albums. Please try again.'
         setSongs([])
         setAlbums([])
-        setError('We could not load your music right now.')
+        setError(errorMsg)
+        showError(errorMsg)
       } finally {
         if (!ignore) {
           setLoading(false)
@@ -122,7 +133,7 @@ export default function Home() {
     return () => {
       ignore = true
     }
-  }, [])
+  }, [showError])
 
   const playFeaturedMix = () => {
     if (!songs.length) return
@@ -147,8 +158,19 @@ export default function Home() {
     navigate(`/search${params.toString() ? `?${params.toString()}` : ''}`)
   }
 
+  const pageVariantsWithAccessibility = prefersReducedMotion
+    ? { initial: {}, animate: {}, exit: {} }
+    : pageVariants
+
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
+    <motion.div
+      style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }}
+      className="scrollbar-hidden"
+      variants={pageVariantsWithAccessibility}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <section style={styles.section}>
         <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center' }}>
           <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '20px' : styles.sectionTitle.fontSize }}>Featured</h2>
@@ -216,6 +238,6 @@ export default function Home() {
           </div>
         )}
       </section>
-    </div>
+    </motion.div>
   )
 }

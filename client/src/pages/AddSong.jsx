@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { usePlayer } from '../context/PlayerContext'
+import { adminSongsService, albumsService } from '../lib/services'
+import { useToast } from '../context/ToastContext'
 import useViewport from '../hooks/useViewport'
-import api from '../lib/api'
 
 const initialForm = {
   title: '',
@@ -277,6 +278,7 @@ const styles = {
 
 export default function AddSong() {
   const { user } = usePlayer()
+  const { error: showError, success: showSuccess } = useToast()
   const [searchParams] = useSearchParams()
   const [form, setForm] = useState(initialForm)
   const [albums, setAlbums] = useState([])
@@ -296,12 +298,20 @@ export default function AddSong() {
   const preselectedAlbum = searchParams.get('album') || ''
 
   useEffect(() => {
-    api
-      .get('/api/songs/albums')
-      .then((response) => setAlbums(response.data))
-      .catch(() => setAlbums([]))
-      .finally(() => setAlbumsLoading(false))
-  }, [])
+    const loadAlbums = async () => {
+      try {
+        const data = await albumsService.getAll()
+        setAlbums(data)
+      } catch (err) {
+        setAlbums([])
+        showError('Failed to load albums')
+      } finally {
+        setAlbumsLoading(false)
+      }
+    }
+    
+    loadAlbums()
+  }, [showError])
 
   useEffect(() => {
     if (!preselectedAlbum) return
@@ -397,16 +407,27 @@ export default function AddSong() {
 
   const submit = async () => {
     if (!form.title.trim() || !form.artist.trim()) {
-      setMessage({ text: 'Title and artist are required.', type: 'error' })
+      const msg = 'Title and artist are required.'
+      setMessage({ text: msg, type: 'error' })
+      showError(msg)
       return
     }
 
     if (!audioFile) {
-      setMessage({ text: 'Please select an audio file.', type: 'error' })
+      const msg = 'Please select an audio file.'
+      setMessage({ text: msg, type: 'error' })
+      showError(msg)
       return
     }
 
     const token = localStorage.getItem('token')
+    if (!token) {
+      const msg = 'You must be logged in to upload songs.'
+      setMessage({ text: msg, type: 'error' })
+      showError(msg)
+      return
+    }
+
     const finalAlbum = newAlbumName.trim() || selectedAlbum || form.album.trim()
     const formData = new FormData()
 
@@ -428,24 +449,23 @@ export default function AddSong() {
       setProgress(0)
       setMessage({ text: '', type: '' })
 
-      await api.post('/api/songs/upload', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+      const config = {
         onUploadProgress: (event) => {
           if (!event.total) return
           setProgress(Math.round((event.loaded / event.total) * 100))
         },
-      })
+      }
+
+      await adminSongsService.upload(formData, token, config)
 
       resetForm()
-      setMessage({ text: 'Song uploaded successfully.', type: 'success' })
+      const successMsg = 'Song uploaded successfully!'
+      setMessage({ text: successMsg, type: 'success' })
+      showSuccess(successMsg)
     } catch (error) {
-      setMessage({
-        text: `Upload failed: ${error.response?.data?.message || error.message}`,
-        type: 'error',
-      })
+      const errorMsg = `Upload failed: ${error.response?.data?.message || error.message || 'Unknown error'}`
+      setMessage({ text: errorMsg, type: 'error' })
+      showError(errorMsg)
     } finally {
       setUploading(false)
     }

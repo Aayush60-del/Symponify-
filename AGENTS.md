@@ -123,6 +123,142 @@ Frontend optional env:
 - Add concise comments only when the logic is non-obvious.
 - Preserve the existing Symponify design language.
 
+## Animation & UI System (Framer Motion + ShadCN/UI)
+
+### New Dependencies Installed
+- **Framer Motion 12.40.0** - Animation library with GPU acceleration
+- **Radix UI 53 packages** - Accessible component primitives
+- **Utilities:** clsx, class-variance-authority, tailwind-merge
+
+### New Component Libraries
+
+#### Animation System (`src/lib/animations.js`)
+- 30+ animation variants for all interaction types
+- Consistent easing curve: `[0.22, 1, 0.36, 1]`
+- Categories: page transitions, list animations, hover effects, modals, loading states
+- **Usage:** `import { pageVariants, listItemVariants } from '../lib/animations'`
+
+#### Accessibility Utilities (`src/lib/animation-utils.js`)
+- `useReducedMotion()` - Respects user accessibility preferences
+- `createAccessibleTransition()` - Motion-aware timing
+- `usePageTransition()` - Combined hook for pages
+- **All animations disable when prefers-reduced-motion is enabled**
+
+#### Toast Notifications (`src/context/ToastContext.jsx` + `src/components/Toast.jsx`)
+- Global notification system via React Context
+- `useToast()` hook: `success()`, `error()`, `warning()`, `info()`
+- Auto-dismiss with configurable duration
+- Position: fixed top-right corner
+- **Usage:** `const { success, error } = useToast()`
+
+#### Skeleton Loaders (`src/components/Skeleton.jsx`)
+- Base `Skeleton` with pulse animation
+- Pre-built: `SongRowSkeleton`, `AlbumCardSkeleton`, `PlayerBarSkeleton`
+- `SkeletonWrapper` for conditional loading states
+- **Usage:** Wrap loading content for seamless UX
+
+#### Motion Wrappers (`src/components/motion/MotionWrappers.jsx`)
+- `AnimatedPage` - Page transitions
+- `AnimatedContainer` - Staggered children
+- `AnimatedList` & `AnimatedListItem` - List animations
+- `FadeIn`, `HoverScale`, `SkeletonWrapper` - Common patterns
+
+#### UI Components (`src/components/ui/`)
+- **Button** - Variants: default, outline, ghost, secondary, destructive, link
+- **Badge** - Variants: primary, secondary, success, warning, error, info
+- **Card** - CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+- **Input** - Text input with focus states
+- **Textarea** - Multi-line input with min-height
+- All components: Full dark mode support, accessibility-first design
+
+### Integration Points
+
+**In `src/main.jsx`:**
+```javascript
+<ToastProvider>
+  <PlayerProvider>
+    <App />
+    <ToastContainer />
+  </PlayerProvider>
+</ToastProvider>
+```
+
+**In `src/components/MainLayout.jsx`:**
+- Page transitions on route change
+- Sidebar backdrop animation
+- Motion wrapper on content outlet
+
+**In `src/components/SongRow.jsx`:**
+- List item fade + slide animation
+- Hover lift effect with background change
+- Like button scale animation
+
+### Documentation Files
+
+- **`INTEGRATION_STATUS.md`** - Comprehensive checklist of completed tasks and roadmap
+- **`IMPLEMENTATION_GUIDE.md`** - 7 common patterns with copy-paste code examples
+- **`API_REFERENCE.md`** - Complete API documentation for all systems
+- **`INTEGRATION_COMPLETE.md`** - Detailed summary of Phase 1-2 completion
+
+### Quick Start Examples
+
+**Animate a page:**
+```javascript
+import { pageVariants } from '../lib/animations'
+import { useReducedMotion } from '../lib/animation-utils'
+
+<motion.div variants={prefersReducedMotion ? {} : pageVariants} {...} />
+```
+
+**Show toast notification:**
+```javascript
+import { useToast } from '../context/ToastContext'
+
+const { success, error } = useToast()
+success('Saved!')  // Auto-dismisses after 3s
+```
+
+**Load with skeleton:**
+```javascript
+import { SkeletonWrapper, SongRowSkeleton } from '../components/Skeleton'
+
+<SkeletonWrapper isLoading={loading} skeleton={<SongRowSkeleton />}>
+  {songs.map(s => <SongRow key={s._id} song={s} />)}
+</SkeletonWrapper>
+```
+
+**Animated list:**
+```javascript
+import { AnimatedList, AnimatedListItem } from '../components/motion/MotionWrappers'
+
+<AnimatedList>
+  {items.map(item => (
+    <AnimatedListItem key={item.id}>{item.name}</AnimatedListItem>
+  ))}
+</AnimatedList>
+```
+
+### Next Implementation Steps
+
+**High Priority (Core Pages):**
+1. Home.jsx - Add page animations + skeleton loading
+2. Search.jsx - Result animations + loading states
+3. Library.jsx - List animations + skeletons
+
+**Medium Priority (Forms):**
+4. Login.jsx - Form animations + toast integration
+5. AddSong.jsx - Upload animation + notifications
+6. ManageSongs.jsx - Modal + list animations
+
+**Polish & Optimization:**
+7. Navbar.jsx, Sidebar.jsx, PlayerBar.jsx - Component animations
+8. Album/Featured Cards - Hover effects
+9. Accessibility audit - prefers-reduced-motion testing
+10. Performance profiling - Frame rate optimization
+
+### Build Status
+✅ **Successful** - Build: 477.43 KB (148.58 KB gzipped), 523 modules, 7.96s compile time
+
 ## Debugging Checklist
 
 1. Check `client/vercel.json` rewrites.

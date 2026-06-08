@@ -1,11 +1,15 @@
 import { FiHeart, FiPlay, FiVolume2 } from 'react-icons/fi'
+import { motion } from 'framer-motion'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
+import { listItemVariants, hoverYVariants } from '../lib/animations'
+import { useReducedMotion } from '../lib/animation-utils'
 import CoverArt from './CoverArt'
 
 export default function SongRow({ song, index, onPlay }) {
   const { currentTrack, isLiked, isPlaying, playSong, toggleLike } = usePlayer()
   const { isXs, isMobile, isTabletOrBelow } = useViewport()
+  const prefersReducedMotion = useReducedMotion()
   const active = currentTrack?._id === song._id
   const liked = isLiked(song._id)
   const rowStyle = {
@@ -18,8 +22,23 @@ export default function SongRow({ song, index, onPlay }) {
     padding: isXs ? '10px' : isMobile ? '12px' : styles.row.padding,
   }
 
+  const itemVariants = prefersReducedMotion
+    ? { hidden: {}, visible: {}, hover: {} }
+    : {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
+        hover: { y: -2, backgroundColor: 'rgba(255, 92, 53, 0.12)', transition: { duration: 0.2 } },
+      }
+
   return (
-    <div style={rowStyle} onClick={() => (onPlay ? onPlay(song) : playSong(song))}>
+    <motion.div
+      style={rowStyle}
+      variants={itemVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover={!prefersReducedMotion ? 'hover' : undefined}
+      onClick={() => (onPlay ? onPlay(song) : playSong(song))}
+    >
       {!isMobile ? <div style={styles.index}>{active && isPlaying ? <FiVolume2 size={14} /> : String(index).padStart(2, '0')}</div> : null}
       <CoverArt
         src={song.coverUrl}
@@ -35,18 +54,20 @@ export default function SongRow({ song, index, onPlay }) {
       <div style={{ ...styles.meta, gridColumn: isMobile ? '2 / 3' : 'auto', justifySelf: isMobile ? 'start' : styles.meta.justifySelf }}>
         {song.duration || song.genre || '3:20'}
       </div>
-      <button
+      <motion.button
         type="button"
         style={{ ...styles.likeButton, color: liked ? '#c9184a' : 'var(--text-3)', gridColumn: isMobile ? '3 / 4' : 'auto', gridRow: isMobile ? '1 / 2' : 'auto' }}
         aria-label={`Like ${song.title}`}
+        whileHover={!prefersReducedMotion ? { scale: 1.15 } : undefined}
+        whileTap={!prefersReducedMotion ? { scale: 0.92 } : undefined}
         onClick={(event) => {
           event.stopPropagation()
           toggleLike(song)
         }}
       >
         <FiHeart fill={liked ? 'currentColor' : 'none'} />
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   )
 }
 
@@ -61,6 +82,7 @@ const styles = {
     border: '1px solid rgba(26, 26, 24, 0.05)',
     marginBottom: '10px',
     cursor: 'pointer',
+    transition: 'background-color 0.2s ease',
   },
   index: {
     fontFamily: 'var(--mono)',
@@ -114,5 +136,6 @@ const styles = {
     cursor: 'pointer',
     display: 'grid',
     placeItems: 'center',
+    transition: 'color 0.2s ease',
   },
 }

@@ -1,5 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
-import api from '../lib/api'
+import { motion } from 'framer-motion'
+import { useToast } from '../context/ToastContext'
+import { songsService, albumsService } from '../lib/services'
+import { pageVariants } from '../lib/animations'
+import { useReducedMotion } from '../lib/animation-utils'
 import AlbumCard from '../components/AlbumCard'
 import useViewport from '../hooks/useViewport'
 
@@ -68,6 +72,8 @@ const styles = {
 }
 
 export default function Library() {
+  const { error: showError } = useToast()
+  const prefersReducedMotion = useReducedMotion()
   const { isMobile, isTabletOrBelow, isWide } = useViewport()
   const [activeTab, setActiveTab] = useState('Albums')
   const [songs, setSongs] = useState([])
@@ -82,15 +88,20 @@ export default function Library() {
       try {
         setLoading(true)
         setError('')
-        const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
+        const [songsData, albumsData] = await Promise.all([
+          songsService.getAll({ limit: 100 }),
+          albumsService.getAll(),
+        ])
         if (ignore) return
-        setSongs(songsResponse.data)
-        setAlbums(albumsResponse.data)
-      } catch {
+        setSongs(songsData || [])
+        setAlbums(albumsData || [])
+      } catch (err) {
         if (ignore) return
+        const errorMsg = 'Library data is unavailable right now.'
         setSongs([])
         setAlbums([])
-        setError('Library data is unavailable right now.')
+        setError(errorMsg)
+        showError(errorMsg)
       } finally {
         if (!ignore) {
           setLoading(false)
@@ -103,7 +114,7 @@ export default function Library() {
     return () => {
       ignore = true
     }
-  }, [])
+  }, [showError])
 
   const artistItems = useMemo(() => {
     const artistMap = new Map()
@@ -130,8 +141,19 @@ export default function Library() {
     return podcastItems
   }, [activeTab, albums, artistItems])
 
+  const pageVariantsWithAccessibility = prefersReducedMotion
+    ? { initial: {}, animate: {}, exit: {} }
+    : pageVariants
+
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
+    <motion.div
+      style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }}
+      className="scrollbar-hidden"
+      variants={pageVariantsWithAccessibility}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <div style={styles.tabs}>
         {tabs.map((tab) => (
           <button
@@ -170,6 +192,6 @@ export default function Library() {
       ) : (
         <div style={styles.empty}>No data is available for this section yet.</div>
       )}
-    </div>
+    </motion.div>
   )
 }

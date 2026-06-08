@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../lib/api'
+import { useToast } from '../context/ToastContext'
+import { authService } from '../lib/services'
 import useViewport from '../hooks/useViewport'
 
 const styles = {
@@ -166,6 +167,7 @@ export default function Login() {
   const [submitting, setSubmitting] = useState(false)
   const [adminSubmitting, setAdminSubmitting] = useState(false)
   const navigate = useNavigate()
+  const { error: showError, success: showSuccess } = useToast()
   const { isMobile, isTabletOrBelow, isWide } = useViewport()
 
   const handleAuthSuccess = (data, nextPath = '/') => {
@@ -192,14 +194,37 @@ export default function Login() {
   const submit = async () => {
     setError('')
 
+    // Validation
+    if (!form.email || !form.password) {
+      const errorMsg = 'Please fill in all required fields'
+      setError(errorMsg)
+      showError(errorMsg)
+      return
+    }
+
+    if (tab === 'signup' && !form.name) {
+      const errorMsg = 'Please enter your name'
+      setError(errorMsg)
+      showError(errorMsg)
+      return
+    }
+
     try {
       setSubmitting(true)
-      const endpoint = tab === 'login' ? '/api/auth/login' : '/api/auth/register'
-      const payload = tab === 'login' ? { email: form.email, password: form.password } : form
-      const { data } = await api.post(endpoint, payload)
+      let data
+
+      if (tab === 'login') {
+        data = await authService.login(form.email, form.password)
+      } else {
+        data = await authService.register(form.name, form.email, form.password)
+      }
+
+      showSuccess(tab === 'login' ? 'Logged in successfully!' : 'Account created successfully!')
       handleAuthSuccess(data)
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      const errorMsg = err.response?.data?.message || err.message || 'Something went wrong'
+      setError(errorMsg)
+      showError(errorMsg)
     } finally {
       setSubmitting(false)
     }
@@ -212,17 +237,29 @@ export default function Login() {
 
   const openAdminAccess = async () => {
     setError('')
-    setTab('login')
+
+    if (!form.email || !form.password) {
+      const errorMsg = 'Please enter email and password for admin access'
+      setError(errorMsg)
+      showError(errorMsg)
+      return
+    }
 
     try {
       setAdminSubmitting(true)
-      const { data } = await api.post('/api/auth/admin-access', {
-        email: form.email,
-        password: form.password,
-      })
+      // Admin login is same as regular login, just with admin credentials
+      const data = await authService.login(form.email, form.password)
+      
+      if (!data.user?.isAdmin) {
+        throw new Error('Invalid admin credentials')
+      }
+      
+      showSuccess('Admin access granted!')
       handleAuthSuccess(data, '/add-song')
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong')
+      const errorMsg = err.response?.data?.message || err.message || 'Invalid admin credentials'
+      setError(errorMsg)
+      showError(errorMsg)
     } finally {
       setAdminSubmitting(false)
     }

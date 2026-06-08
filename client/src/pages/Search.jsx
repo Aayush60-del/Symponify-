@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import api from '../lib/api'
+import { motion } from 'framer-motion'
+import { useToast } from '../context/ToastContext'
+import { songsService, albumsService } from '../lib/services'
+import { pageVariants } from '../lib/animations'
+import { useReducedMotion } from '../lib/animation-utils'
 import AlbumCard from '../components/AlbumCard'
 import SongRow from '../components/SongRow'
 import { usePlayer } from '../context/PlayerContext'
@@ -94,6 +98,8 @@ const styles = {
 
 export default function Search() {
   const { playSong } = usePlayer()
+  const { error: showError } = useToast()
+  const prefersReducedMotion = useReducedMotion()
   const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(() => searchParams.get('q') || '')
@@ -109,28 +115,26 @@ export default function Search() {
   }, [searchParams])
 
   useEffect(() => {
-    const params = new URLSearchParams()
-    if (search) params.set('search', search)
-    if (genre !== 'All') params.set('genre', genre)
-
     let ignore = false
 
     const load = async () => {
       try {
         setLoading(true)
         setError('')
-        const [songsResponse, albumsResponse] = await Promise.all([
-          api.get(`/api/songs${params.toString() ? `?${params.toString()}` : ''}`),
-          api.get('/api/songs/albums'),
+        const [songsData, albumsData] = await Promise.all([
+          songsService.searchSongs(search, genre),
+          albumsService.getAll(),
         ])
         if (ignore) return
-        setSongs(songsResponse.data)
-        setAlbums(albumsResponse.data)
-      } catch {
+        setSongs(songsData || [])
+        setAlbums(albumsData || [])
+      } catch (err) {
         if (ignore) return
+        const errorMsg = 'Search is unavailable right now.'
         setSongs([])
         setAlbums([])
-        setError('Search is unavailable right now.')
+        setError(errorMsg)
+        showError(errorMsg)
       } finally {
         if (!ignore) {
           setLoading(false)
@@ -143,7 +147,7 @@ export default function Search() {
     return () => {
       ignore = true
     }
-  }, [genre, search])
+  }, [genre, search, showError])
 
   const topResult = useMemo(() => songs[0], [songs])
   const visibleAlbums = useMemo(() => {
@@ -186,8 +190,19 @@ export default function Search() {
     setSearchParams(nextParams, { replace: true })
   }
 
+  const pageVariantsWithAccessibility = prefersReducedMotion
+    ? { initial: {}, animate: {}, exit: {} }
+    : pageVariants
+
   return (
-    <div style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }} className="scrollbar-hidden">
+    <motion.div
+      style={{ ...styles.page, padding: isMobile ? '16px' : isTabletOrBelow ? '20px' : styles.page.padding, width: '100%', maxWidth: isWide ? '1500px' : '100%', marginInline: 'auto' }}
+      className="scrollbar-hidden"
+      variants={pageVariantsWithAccessibility}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <div style={{ ...styles.top, gridTemplateColumns: isCompact ? 'minmax(0, 1fr)' : styles.top.gridTemplateColumns }}>
         <section style={{ ...styles.searchBox, padding: isMobile ? '16px' : styles.searchBox.padding }}>
           <input
@@ -262,6 +277,6 @@ export default function Search() {
           <div style={styles.empty}>{loading ? 'Loading songs...' : 'No songs matched your search.'}</div>
         )}
       </section>
-    </div>
+    </motion.div>
   )
 }

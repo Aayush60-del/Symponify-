@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { FiAlertCircle, FiEdit3, FiMusic, FiPlusCircle, FiSave, FiTrash2, FiUpload, FiX } from 'react-icons/fi'
 import CoverArt from '../components/CoverArt'
 import { usePlayer } from '../context/PlayerContext'
+import { adminSongsService, albumsService, songsService } from '../lib/services'
+import { useToast } from '../context/ToastContext'
 import useViewport from '../hooks/useViewport'
-import api from '../lib/api'
 
 const styles = {
   page: {
@@ -279,6 +280,7 @@ const albumCountLabel = (count) => `${count} ${count === 1 ? 'song' : 'songs'}`
 
 export default function ManageSongs() {
   const { user } = usePlayer()
+  const { error: showError, success: showSuccess } = useToast()
   const navigate = useNavigate()
   const { isMobile, isTabletOrBelow, isCompact, isWide } = useViewport()
   const [songs, setSongs] = useState([])
@@ -302,9 +304,10 @@ export default function ManageSongs() {
     try {
       setLoading(true)
       setLoadError('')
-      const [songsResponse, albumsResponse] = await Promise.all([api.get('/api/songs'), api.get('/api/songs/albums')])
-      const nextSongs = songsResponse.data
-      const nextAlbums = albumsResponse.data
+      const [nextSongs, nextAlbums] = await Promise.all([
+        songsService.getAll({ limit: 500 }),
+        albumsService.getAll(),
+      ])
 
       setSongs(nextSongs)
       setAlbums(nextAlbums)
@@ -314,11 +317,13 @@ export default function ManageSongs() {
         if (prev && available.includes(prev)) return prev
         return available[0] || ''
       })
-    } catch {
+    } catch (err) {
       setSongs([])
       setAlbums([])
       setSelectedAlbum('')
-      setLoadError('We could not load the song manager right now.')
+      const errorMsg = 'We could not load the song manager right now.'
+      setLoadError(errorMsg)
+      showError(errorMsg)
     } finally {
       setLoading(false)
     }
@@ -359,59 +364,64 @@ export default function ManageSongs() {
 
   const saveSong = async (songId) => {
     try {
-      const { data } = await api.put(`/api/songs/${songId}`, editForm, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      await loadData(data.song.album || selectedAlbum)
-      setMessage({ text: 'Song updated successfully.', type: 'success' })
+      const updatedSong = await adminSongsService.update(songId, editForm, token)
+      await loadData(updatedSong?.album || selectedAlbum)
+      const successMsg = 'Song updated successfully.'
+      setMessage({ text: successMsg, type: 'success' })
+      showSuccess(successMsg)
       setEditingSongId('')
       setEditForm(emptyEdit)
     } catch (error) {
-      setMessage({ text: error.response?.data?.message || 'Update failed', type: 'error' })
+      const errorMsg = error.response?.data?.message || 'Update failed'
+      setMessage({ text: errorMsg, type: 'error' })
+      showError(errorMsg)
     }
   }
 
   const deleteSong = async (songId) => {
     try {
-      await api.delete(`/api/songs/${songId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await adminSongsService.delete(songId, token)
       await loadData(selectedAlbum)
-      setMessage({ text: 'Song deleted successfully.', type: 'success' })
+      const successMsg = 'Song deleted successfully.'
+      setMessage({ text: successMsg, type: 'success' })
+      showSuccess(successMsg)
       setSongPendingDelete(null)
       if (editingSongId === songId) {
         cancelEdit()
       }
     } catch (error) {
-      setMessage({ text: error.response?.data?.message || 'Delete failed', type: 'error' })
+      const errorMsg = error.response?.data?.message || 'Delete failed'
+      setMessage({ text: errorMsg, type: 'error' })
+      showError(errorMsg)
     }
   }
 
   const createAlbum = async () => {
     const title = createAlbumForm.title.trim()
     if (!title) {
-      setMessage({ text: 'Album name is required.', type: 'error' })
+      const msg = 'Album name is required.'
+      setMessage({ text: msg, type: 'error' })
+      showError(msg)
       return
     }
 
     try {
       setCreatingAlbum(true)
-      const { data } = await api.post(
-        '/api/songs/albums',
-        {
-          title,
-          artist: createAlbumForm.artist.trim(),
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('artist', createAlbumForm.artist.trim())
+
+      const albumData = await albumsService.create(formData, token)
 
       setCreateAlbumForm(emptyAlbumForm)
-      await loadData(data.album.title)
-      setMessage({ text: 'Album created successfully. You can add songs and a cover later.', type: 'success' })
+      await loadData(albumData.title)
+      const successMsg = 'Album created successfully. You can add songs and a cover later.'
+      setMessage({ text: successMsg, type: 'success' })
+      showSuccess(successMsg)
     } catch (error) {
-      setMessage({ text: error.response?.data?.message || 'Album creation failed', type: 'error' })
+      const errorMsg = error.response?.data?.message || 'Album creation failed'
+      setMessage({ text: errorMsg, type: 'error' })
+      showError(errorMsg)
     } finally {
       setCreatingAlbum(false)
     }

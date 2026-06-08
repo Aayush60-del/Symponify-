@@ -1,4 +1,5 @@
 const { v2: cloudinary } = require('cloudinary')
+const path = require('path')
 
 /**
  * Retrieves Cloudinary configuration from environment variables.
@@ -60,6 +61,31 @@ const getUploadedFileUrl = (file) => file?.secure_url || file?.path || ''
  * @returns {string} Cloudinary public ID
  */
 const getUploadedFilePublicId = (file) => file?.filename || file?.public_id || ''
+
+// When using local disk storage, multer provides `file.path` which is an absolute
+// filesystem path (e.g. /.../server/public/songs/Title/1234-audio.mp3). Convert
+// that to a public URL path under /songs/... so clients can fetch it.
+const convertLocalPathToUrl = (p) => {
+  if (!p) return ''
+  try {
+    const normalized = p.replace(/\\/g, '/')
+    const idx = normalized.indexOf('/public/songs/')
+    if (idx === -1) return ''
+    return normalized.slice(idx + '/public'.length)
+  } catch {
+    return ''
+  }
+}
+
+const getUploadedFileUrlNormalized = (file) => {
+  if (!file) return ''
+  if (file.secure_url) return file.secure_url
+  if (file.path) {
+    const url = convertLocalPathToUrl(file.path)
+    return url || file.path
+  }
+  return ''
+}
 
 /**
  * Deletes an asset from Cloudinary by resource type.

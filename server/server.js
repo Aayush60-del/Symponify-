@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const connectDB = require('./config/db')
 
+const path = require('path')
 const app = express()
 connectDB()
 app.set('trust proxy', 1)
@@ -45,6 +46,9 @@ app.use(express.json({ limit: '1mb' }))
 app.get('/', (_req, res) => {
   res.send('Symponify Backend Running')
 })
+
+// Serve local media fallback for development: /songs/* -> server/public/songs/*
+app.use('/songs', express.static(path.join(__dirname, 'public', 'songs')))
 
 // All media is now served via Cloudinary URLs stored in MongoDB
 // No local file serving is performed
