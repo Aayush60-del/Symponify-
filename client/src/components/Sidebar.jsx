@@ -115,7 +115,8 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     localStorage.removeItem('user')
     localStorage.removeItem('guestAccess')
     window.dispatchEvent(new Event('authchange'))
-    navigate('/', { replace: true })
+    // Redirect to landing page instead of login
+    window.location.href = '/'
     onClose?.()
   }
 

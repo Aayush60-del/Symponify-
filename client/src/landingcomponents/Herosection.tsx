@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import PlayerMockup from './PlayerMockup'
+import PlayerMockup from './Playermockup'
 
 const letterVariants = {
   hidden: { opacity: 0, y: 60, rotateX: -40 },
