@@ -115,7 +115,7 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     localStorage.removeItem('user')
     localStorage.removeItem('guestAccess')
     window.dispatchEvent(new Event('authchange'))
-    navigate('/login', { replace: true })
+    navigate('/', { replace: true })
     onClose?.()
   }
 
@@ -223,3 +223,4 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     </aside>
   )
 }
+
