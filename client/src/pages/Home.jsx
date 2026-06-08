@@ -41,6 +41,8 @@ const featuredItems = [
 const styles = {
   page: {
     padding: '28px',
+    display: 'flex',
+    flexDirection: 'column',
     overflowY: 'auto',
     height: '100%',
   },
@@ -131,7 +133,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const carouselRef = useRef(null)
-  
+
   const scrollCarousel = (direction) => {
     if (carouselRef.current) {
       const scrollAmount = isMobile ? 200 : 400
@@ -213,7 +215,7 @@ export default function Home() {
       animate="animate"
       exit="exit"
     >
-      <section style={styles.section}>
+      <section style={{ ...styles.section, flexShrink: 0 }}>
         <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center' }}>
           <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '20px' : styles.sectionTitle.fontSize }}>Featured</h2>
           <button type="button" style={styles.sectionAction} onClick={() => navigate('/search')}>
@@ -231,7 +233,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section style={styles.section}>
+      <section style={{ ...styles.section, flexShrink: 0 }}>
         <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center' }}>
           <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '20px' : styles.sectionTitle.fontSize }}>Recommended for You</h2>
           <button type="button" style={styles.sectionAction} onClick={() => navigate('/library')}>
@@ -247,17 +249,17 @@ export default function Home() {
             </p>
             <div style={styles.carouselWrap}>
               {!isMobile && (
-                <button 
-                  style={{ ...styles.scrollButton, left: '-20px' }} 
+                <button
+                  style={{ ...styles.scrollButton, left: '-20px' }}
                   onClick={() => scrollCarousel('left')}
                   aria-label="Scroll left"
                 >
                   <Icon name="chevron_left" size={24} />
                 </button>
               )}
-              <div 
+              <div
                 ref={carouselRef}
-                className="scrollbar-hidden" 
+                className="scrollbar-hidden"
                 style={styles.albumRow}
               >
                 {albums.map((album, index) => (
@@ -271,8 +273,8 @@ export default function Home() {
                 ))}
               </div>
               {!isMobile && (
-                <button 
-                  style={{ ...styles.scrollButton, right: '-20px' }} 
+                <button
+                  style={{ ...styles.scrollButton, right: '-20px' }}
                   onClick={() => scrollCarousel('right')}
                   aria-label="Scroll right"
                 >
@@ -286,24 +288,27 @@ export default function Home() {
         )}
       </section>
 
-      <section style={styles.section}>
-        <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center' }}>
+      <section style={{ ...styles.section, display: 'flex', flexDirection: 'column', flex: 1, minHeight: '40vh', marginBottom: 0 }}>
+        <div style={{ ...styles.sectionHead, flexWrap: isMobile ? 'wrap' : 'nowrap', alignItems: isMobile ? 'flex-start' : 'center', flexShrink: 0 }}>
           <h2 style={{ ...styles.sectionTitle, fontSize: isMobile ? '20px' : styles.sectionTitle.fontSize }}>Your Library</h2>
           <button type="button" style={styles.sectionAction} onClick={() => navigate('/liked')}>
             Recently played
           </button>
         </div>
-        {error ? (
-          <div style={styles.empty}>{error}</div>
-        ) : visibleSongs.length ? (
-          visibleSongs.map((song, index) => (
-            <SongRow key={song._id || `${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, visibleSongs)} />
-          ))
-        ) : (
-          <div style={styles.empty}>
-            {selectedAlbum ? 'No songs were found for this album yet.' : 'Your library is empty right now. Upload songs from the Add Song page to fill this list.'}
-          </div>
-        )}
+
+        <div className="scrollbar-hidden" style={{ flex: 1, overflowY: 'auto', minHeight: 0, paddingRight: '4px' }}>
+          {error ? (
+            <div style={styles.empty}>{error}</div>
+          ) : visibleSongs.length ? (
+            visibleSongs.map((song, index) => (
+              <SongRow key={song._id || `${song.title}-${index}`} song={song} index={index + 1} onPlay={(selectedSong) => playSong(selectedSong, visibleSongs)} />
+            ))
+          ) : (
+            <div style={styles.empty}>
+              {selectedAlbum ? 'No songs were found for this album yet.' : 'Your library is empty right now. Upload songs from the Add Song page to fill this list.'}
+            </div>
+          )}
+        </div>
       </section>
     </motion.div>
   )

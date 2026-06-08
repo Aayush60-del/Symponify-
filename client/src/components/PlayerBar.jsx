@@ -110,7 +110,7 @@ const styles = {
   progressRange: {
     '--progress': '0%',
     width: '100%',
-    height: '6px',
+    height: '12px',
     borderRadius: '999px',
     outline: 'none',
     background: 'linear-gradient(to right, var(--accent) 0%, var(--accent-2) var(--progress), var(--surface-3) var(--progress), var(--surface-3) 100%)',

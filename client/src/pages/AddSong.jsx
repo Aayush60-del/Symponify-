@@ -380,6 +380,21 @@ export default function AddSong() {
     setAudioName(file.name)
     setMessage({ text: '', type: '' })
 
+    // Auto-parse filename for title and artist (assuming "Artist - Title" format)
+    const fileNameNoExt = file.name.replace(/\.[^/.]+$/, '')
+    let parsedArtist = ''
+    let parsedTitle = fileNameNoExt
+    if (fileNameNoExt.includes('-')) {
+      const parts = fileNameNoExt.split('-')
+      parsedArtist = parts[0].trim()
+      parsedTitle = parts.slice(1).join('-').trim()
+    }
+    setForm((prev) => ({
+      ...prev,
+      title: prev.title || parsedTitle,
+      artist: prev.artist || parsedArtist,
+    }))
+
     const previewAudio = new Audio(URL.createObjectURL(file))
     previewAudio.onloadedmetadata = () => {
       const minutes = Math.floor(previewAudio.duration / 60)

@@ -12,7 +12,7 @@ export default function About() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -22,7 +22,7 @@ export default function About() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">About Symponify</h1>
-          <p className="text-xl text-muted-foreground">A music platform for the future</p>
+          <p className="text-xl text-[var(--text-2)]">A music platform for the future</p>
         </motion.div>
 
         <motion.div
@@ -31,11 +31,11 @@ export default function About() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="space-y-12"
         >
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle className="text-2xl">Our Mission</CardTitle>
             </CardHeader>
-            <CardContent className="text-lg text-muted-foreground space-y-4">
+            <CardContent className="text-lg text-[var(--text-2)] space-y-4">
               <p>
                 At Symponify, we believe that music is a universal language that brings people together. 
                 Our mission is to create a platform where music discovery, curation, and sharing are 
@@ -48,11 +48,11 @@ export default function About() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle className="text-2xl">Our Story</CardTitle>
             </CardHeader>
-            <CardContent className="text-lg text-muted-foreground space-y-4">
+            <CardContent className="text-lg text-[var(--text-2)] space-y-4">
               <p>
                 Symponify started as a passion project by a team of music enthusiasts and developers who 
                 wanted to build something better. We noticed that existing music platforms were either too 
@@ -66,7 +66,7 @@ export default function About() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle className="text-2xl">Our Values</CardTitle>
             </CardHeader>
@@ -74,19 +74,19 @@ export default function About() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold mb-2">🎯 Simplicity</h3>
-                  <p className="text-muted-foreground">We keep things simple and intuitive</p>
+                  <p className="text-[var(--text-2)]">We keep things simple and intuitive</p>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">♿ Accessibility</h3>
-                  <p className="text-muted-foreground">Music should be for everyone</p>
+                  <p className="text-[var(--text-2)]">Music should be for everyone</p>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">🌐 Open Source</h3>
-                  <p className="text-muted-foreground">Community-driven development</p>
+                  <p className="text-[var(--text-2)]">Community-driven development</p>
                 </div>
                 <div>
                   <h3 className="font-semibold mb-2">✨ Quality</h3>
-                  <p className="text-muted-foreground">Excellence in everything we do</p>
+                  <p className="text-[var(--text-2)]">Excellence in everything we do</p>
                 </div>
               </div>
             </CardContent>

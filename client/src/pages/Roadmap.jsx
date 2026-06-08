@@ -64,7 +64,7 @@ export default function Roadmap() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -74,13 +74,13 @@ export default function Roadmap() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Roadmap</h1>
-          <p className="text-xl text-muted-foreground">Exciting features coming to Symponify</p>
+          <p className="text-xl text-[var(--text-2)]">Exciting features coming to Symponify</p>
         </motion.div>
 
         <motion.div className="space-y-6" variants={{ animate: { transition: { staggerChildren: 0.1 } } }}>
           {phases.map((phase, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)]">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-2xl">{phase.quarter}</CardTitle>
@@ -109,7 +109,7 @@ export default function Roadmap() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Have feedback?</h2>
-          <p className="text-muted-foreground">
+          <p className="text-[var(--text-2)]">
             We'd love to hear your ideas! Visit our GitHub repository to suggest features or report issues.
           </p>
         </motion.div>

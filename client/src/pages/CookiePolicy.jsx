@@ -12,7 +12,7 @@ export default function CookiePolicy() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -22,7 +22,7 @@ export default function CookiePolicy() {
           className="mb-12"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-2">Cookie Policy</h1>
-          <p className="text-muted-foreground">Last updated: June 2026</p>
+          <p className="text-[var(--text-2)]">Last updated: June 2026</p>
         </motion.div>
 
         <motion.div
@@ -31,21 +31,21 @@ export default function CookiePolicy() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="space-y-6"
         >
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>What are Cookies?</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-[var(--text-2)]">
               Cookies are small text files stored on your device that help us remember you and improve your experience. 
               Symponify uses both session and persistent cookies.
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Essential Cookies</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>These cookies are necessary for the platform to function:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li><strong>auth_token:</strong> Stores your JWT authentication token</li>
@@ -55,11 +55,11 @@ export default function CookiePolicy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Analytics Cookies</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>We may use analytics tools to understand how you use Symponify:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Pages visited</li>
@@ -70,11 +70,11 @@ export default function CookiePolicy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Managing Cookies</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>You can control cookies through your browser settings:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Allow all cookies</li>
@@ -85,21 +85,21 @@ export default function CookiePolicy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Third-Party Cookies</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-[var(--text-2)]">
               We do not use third-party advertising or tracking cookies. If we integrate third-party services in the future, 
               we will update this policy and notify you.
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Questions?</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-[var(--text-2)]">
               If you have questions about our cookie policy, please contact us at privacy@symponify.com
             </CardContent>
           </Card>

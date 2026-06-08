@@ -92,7 +92,8 @@ const styles = {
     textAlign: 'left',
     background: 'transparent',
     cursor: 'pointer',
-    display: 'grid',
+    display: 'flex',
+    flexDirection: 'column',
     gap: '0.35rem',
   },
   art: {

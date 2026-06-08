@@ -43,7 +43,7 @@ export default function Changelog() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -53,13 +53,13 @@ export default function Changelog() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Changelog</h1>
-          <p className="text-xl text-muted-foreground">Track our progress and updates</p>
+          <p className="text-xl text-[var(--text-2)]">Track our progress and updates</p>
         </motion.div>
 
         <motion.div className="space-y-8" variants={{ animate: { transition: { staggerChildren: 0.1 } } }}>
           {versions.map((v, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)]">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <CardTitle className="text-2xl">{v.version}</CardTitle>

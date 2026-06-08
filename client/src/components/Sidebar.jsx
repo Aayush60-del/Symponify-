@@ -137,8 +137,8 @@ export default function Sidebar({ isCompact = false, isOpen = false, onClose }) 
     overflowY: 'auto',
     padding: isTabletOrBelow ? '20px 18px' : styles.sidebar.padding,
     borderRadius: isTabletOrBelow ? '24px' : styles.sidebar.borderRadius,
-    minHeight: isCompact ? 'calc(100dvh - 24px)' : '100%',
-    maxHeight: isCompact ? 'calc(100dvh - 24px)' : 'none',
+    height: isCompact ? 'calc(100dvh - 24px)' : '100%',
+    maxHeight: isCompact ? 'calc(100dvh - 24px)' : '100%',
     width: isCompact ? 'min(320px, calc(100vw - 24px))' : isWide ? '320px' : 'auto',
   }
 

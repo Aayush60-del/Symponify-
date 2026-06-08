@@ -50,7 +50,7 @@ export default function Blog() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -60,13 +60,13 @@ export default function Blog() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Blog</h1>
-          <p className="text-xl text-muted-foreground">Stories, updates, and insights</p>
+          <p className="text-xl text-[var(--text-2)]">Stories, updates, and insights</p>
         </motion.div>
 
         <motion.div className="space-y-6" variants={{ animate: { transition: { staggerChildren: 0.1 } } }}>
           {posts.map((post, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors cursor-pointer">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)] hover:bg-white/10 transition-colors cursor-pointer">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
@@ -77,7 +77,7 @@ export default function Blog() {
                       {post.category}
                     </Badge>
                   </div>
-                  <div className="text-sm text-muted-foreground mt-4">📅 {post.date}</div>
+                  <div className="text-sm text-[var(--text-2)] mt-4">📅 {post.date}</div>
                 </CardHeader>
                 <CardContent>
                   <a href="#" className="text-accent hover:underline text-sm font-semibold">

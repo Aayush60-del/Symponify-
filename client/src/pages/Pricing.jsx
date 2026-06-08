@@ -13,7 +13,7 @@ export default function Pricing() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
@@ -23,7 +23,7 @@ export default function Pricing() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Pricing</h1>
-          <p className="text-xl text-muted-foreground">Forever free. No credit card required.</p>
+          <p className="text-xl text-[var(--text-2)]">Forever free. No credit card required.</p>
         </motion.div>
 
         <motion.div
@@ -84,7 +84,7 @@ export default function Pricing() {
           className="mt-20 text-center"
         >
           <h2 className="text-2xl font-bold mb-6">Why is Symponify free?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-[var(--text-2)] max-w-2xl mx-auto">
             Symponify is built on the philosophy that great music experiences should be accessible to everyone. 
             We believe in open-source software and community-driven development. Enjoy unlimited music without 
             ads, paywalls, or limitations.

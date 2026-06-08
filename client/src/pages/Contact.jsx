@@ -20,7 +20,7 @@ export default function Contact() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -30,7 +30,7 @@ export default function Contact() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Get in Touch</h1>
-          <p className="text-xl text-muted-foreground">We'd love to hear from you</p>
+          <p className="text-xl text-[var(--text-2)]">We'd love to hear from you</p>
         </motion.div>
 
         <motion.div
@@ -39,7 +39,7 @@ export default function Contact() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
         >
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>📧 Email</CardTitle>
             </CardHeader>
@@ -50,7 +50,7 @@ export default function Contact() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>💬 Discord</CardTitle>
             </CardHeader>
@@ -61,7 +61,7 @@ export default function Contact() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>🐙 GitHub</CardTitle>
             </CardHeader>
@@ -79,7 +79,7 @@ export default function Contact() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="max-w-2xl mx-auto"
         >
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
               <CardDescription>We typically respond within 24 hours</CardDescription>

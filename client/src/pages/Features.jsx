@@ -55,7 +55,7 @@ export default function Features() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
@@ -65,7 +65,7 @@ export default function Features() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Features</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-[var(--text-2)] max-w-2xl mx-auto">
             Discover what makes Symponify the perfect music companion
           </p>
         </motion.div>
@@ -81,7 +81,7 @@ export default function Features() {
               key={idx}
               variants={prefersReducedMotion ? {} : listItemVariants}
             >
-              <Card className="h-full bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
+              <Card className="h-full bg-[var(--surface-2)] border-[var(--line)] hover:bg-white/10 transition-colors">
                 <CardHeader>
                   <div className="text-4xl mb-4">{feature.icon}</div>
                   <CardTitle>{feature.title}</CardTitle>
@@ -101,7 +101,7 @@ export default function Features() {
           className="mt-20 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-3xl font-bold mb-4">Coming Soon</h2>
-          <ul className="space-y-3 text-lg text-muted-foreground">
+          <ul className="space-y-3 text-lg text-[var(--text-2)]">
             <li>✨ Collaborative playlists with friends</li>
             <li>✨ Podcast integration</li>
             <li>✨ Advanced audio filters and EQ</li>

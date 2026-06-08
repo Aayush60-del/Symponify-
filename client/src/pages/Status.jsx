@@ -21,7 +21,7 @@ export default function Status() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -31,7 +31,7 @@ export default function Status() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Service Status</h1>
-          <p className="text-xl text-muted-foreground">Current system status and uptime</p>
+          <p className="text-xl text-[var(--text-2)]">Current system status and uptime</p>
         </motion.div>
 
         <motion.div
@@ -54,7 +54,7 @@ export default function Status() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.1 * idx }}
             >
-              <Card className="bg-white/5 border-white/10">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)]">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>{service.name}</CardTitle>
@@ -76,10 +76,10 @@ export default function Status() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Status Updates</h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-[var(--text-2)] mb-4">
             Last updated: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
           </p>
-          <p className="text-muted-foreground">
+          <p className="text-[var(--text-2)]">
             For scheduled maintenance and incidents, check our status page or follow us on social media.
           </p>
         </motion.div>

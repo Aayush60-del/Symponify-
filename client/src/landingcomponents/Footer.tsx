@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Waveform from './Waveform'
 
@@ -29,6 +30,8 @@ const links = {
 
 export default function Footer() {
   const navigate = useNavigate()
+  const [feedback, setFeedback] = useState({ name: '', email: '', description: '' })
+  const [status, setStatus] = useState({ loading: false, success: false, error: '' })
 
   const handleNavigation = (path, external) => {
     if (external) {
@@ -38,12 +41,48 @@ export default function Footer() {
     }
   }
 
+  const submitFeedback = async (e) => {
+    e.preventDefault()
+    if (!feedback.name || !feedback.email || !feedback.description) {
+      setStatus({ ...status, error: 'Please fill all fields' })
+      return
+    }
+
+    try {
+      setStatus({ loading: true, success: false, error: '' })
+      
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+      const response = await fetch(`${API_BASE}/api/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(feedback),
+      })
+
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to submit feedback')
+      }
+
+      setStatus({ loading: false, success: true, error: '' })
+      setFeedback({ name: '', email: '', description: '' })
+      
+      setTimeout(() => {
+        setStatus(s => ({ ...s, success: false }))
+      }, 5000)
+    } catch (err) {
+      setStatus({ loading: false, success: false, error: err.message })
+    }
+  }
+
   return (
-    <footer className="py-16 px-4" style={{ borderTop: '1px solid var(--line)' }}>
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-14">
+    <footer className="py-16 px-4" style={{ borderTop: '1px solid var(--line)', background: 'var(--bg)' }}>
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-8 gap-8 mb-14">
           {/* Brand column */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <button onClick={() => navigate('/')} className="flex items-center gap-2.5 mb-4 hover:opacity-70 transition-opacity">
               <span
                 className="w-8 h-8 rounded-full flex items-center justify-center"
@@ -86,6 +125,60 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Feedback Form */}
+          <div className="lg:col-span-2">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] mb-4" style={{ color: 'var(--text-3)' }}>
+              Send Feedback
+            </p>
+            <form onSubmit={submitFeedback} className="flex flex-col gap-3">
+              {status.success && (
+                <div className="p-3 text-sm rounded-lg" style={{ background: '#f0fff4', color: '#166534', border: '1px solid #86efac' }}>
+                  Thank you! Your feedback has been sent.
+                </div>
+              )}
+              {status.error && (
+                <div className="p-3 text-sm rounded-lg" style={{ background: '#fff5f5', color: '#991b1b', border: '1px solid #fca5a5' }}>
+                  {status.error}
+                </div>
+              )}
+              
+              <input 
+                type="text" 
+                placeholder="Name" 
+                className="p-3 rounded-lg text-sm outline-none w-full"
+                style={{ background: 'var(--surface-2)', color: 'var(--text)', border: '1px solid var(--line)' }}
+                value={feedback.name}
+                onChange={e => setFeedback({...feedback, name: e.target.value})}
+                required
+              />
+              <input 
+                type="email" 
+                placeholder="Email address" 
+                className="p-3 rounded-lg text-sm outline-none w-full"
+                style={{ background: 'var(--surface-2)', color: 'var(--text)', border: '1px solid var(--line)' }}
+                value={feedback.email}
+                onChange={e => setFeedback({...feedback, email: e.target.value})}
+                required
+              />
+              <textarea 
+                placeholder="What can we improve?" 
+                className="p-3 rounded-lg text-sm outline-none w-full resize-none h-24"
+                style={{ background: 'var(--surface-2)', color: 'var(--text)', border: '1px solid var(--line)' }}
+                value={feedback.description}
+                onChange={e => setFeedback({...feedback, description: e.target.value})}
+                required
+              />
+              <button 
+                type="submit" 
+                disabled={status.loading}
+                className="py-3 px-4 rounded-lg text-white text-sm font-bold w-full transition-opacity hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent-2))', opacity: status.loading ? 0.7 : 1 }}
+              >
+                {status.loading ? 'Sending...' : 'Submit Feedback'}
+              </button>
+            </form>
+          </div>
         </div>
 
         {/* Bottom bar */}

@@ -61,7 +61,7 @@ export default function SelfHost() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -71,7 +71,7 @@ export default function SelfHost() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Self-Host Guide</h1>
-          <p className="text-xl text-muted-foreground">Run Symponify on your own infrastructure</p>
+          <p className="text-xl text-[var(--text-2)]">Run Symponify on your own infrastructure</p>
         </motion.div>
 
         <motion.div
@@ -81,7 +81,7 @@ export default function SelfHost() {
           className="mb-12 p-6 rounded-lg bg-blue-500/10 border border-blue-500/20"
         >
           <h2 className="text-lg font-semibold mb-2">📚 Full Documentation</h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-[var(--text-2)] mb-4">
             For detailed step-by-step instructions and troubleshooting:
           </p>
           <a
@@ -102,7 +102,7 @@ export default function SelfHost() {
         >
           {steps.map((step) => (
             <motion.div key={step.num} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)]">
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center font-bold text-accent">
@@ -133,7 +133,7 @@ export default function SelfHost() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Need Help?</h2>
-          <p className="text-muted-foreground">
+          <p className="text-[var(--text-2)]">
             If you encounter any issues, check our GitHub discussions or open an issue on the repository.
           </p>
         </motion.div>

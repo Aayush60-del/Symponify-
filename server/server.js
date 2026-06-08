@@ -61,6 +61,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/songs', require('./routes/songs'))
 app.use('/api/playlists', require('./routes/playlists'))
+app.use('/api/feedback', require('./routes/feedback'))
 
 app.use((err, _req, res, _next) => {
   console.error(err)

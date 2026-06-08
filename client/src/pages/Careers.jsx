@@ -40,7 +40,7 @@ export default function Careers() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -50,7 +50,7 @@ export default function Careers() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Join Our Team</h1>
-          <p className="text-xl text-muted-foreground">Build the future of music with us</p>
+          <p className="text-xl text-[var(--text-2)]">Build the future of music with us</p>
         </motion.div>
 
         <motion.div
@@ -60,7 +60,7 @@ export default function Careers() {
           className="mb-12 p-8 rounded-lg bg-accent/10 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Why Symponify?</h2>
-          <ul className="space-y-2 text-muted-foreground">
+          <ul className="space-y-2 text-[var(--text-2)]">
             <li>✨ Open-source and community-driven</li>
             <li>✨ Work on a product used by music lovers worldwide</li>
             <li>✨ Remote-first, flexible culture</li>
@@ -72,7 +72,7 @@ export default function Careers() {
         <motion.div className="space-y-6" variants={{ animate: { transition: { staggerChildren: 0.1 } } }}>
           {positions.map((pos, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)] hover:bg-white/10 transition-colors">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
@@ -81,7 +81,7 @@ export default function Careers() {
                     </div>
                     <Badge variant="secondary">{pos.type}</Badge>
                   </div>
-                  <div className="mt-4 text-sm text-muted-foreground">📍 {pos.location}</div>
+                  <div className="mt-4 text-sm text-[var(--text-2)]">📍 {pos.location}</div>
                 </CardHeader>
                 <CardContent>
                   <a href="#" className="text-accent hover:underline text-sm font-semibold">
@@ -100,7 +100,7 @@ export default function Careers() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Don't see a fit?</h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-[var(--text-2)] mb-4">
             We're always interested in talented people. Feel free to reach out with your background and interests.
           </p>
           <a href="/contact" className="text-accent hover:underline font-semibold">

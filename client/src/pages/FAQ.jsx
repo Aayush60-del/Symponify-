@@ -57,7 +57,7 @@ export default function FAQ() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-3xl mx-auto">
         <motion.div
@@ -67,7 +67,7 @@ export default function FAQ() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">Frequently Asked Questions</h1>
-          <p className="text-xl text-muted-foreground">Find answers to common questions</p>
+          <p className="text-xl text-[var(--text-2)]">Find answers to common questions</p>
         </motion.div>
 
         <motion.div
@@ -79,7 +79,7 @@ export default function FAQ() {
           {faqs.map((faq, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
               <Card
-                className="bg-white/5 border-white/10 cursor-pointer hover:bg-white/10 transition-colors"
+                className="bg-[var(--surface-2)] border-[var(--line)] cursor-pointer hover:bg-white/10 transition-colors"
                 onClick={() => setOpenIdx(openIdx === idx ? -1 : idx)}
               >
                 <CardContent className="p-6">
@@ -98,7 +98,7 @@ export default function FAQ() {
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <p className="text-muted-foreground mt-4 pt-4 border-t border-white/10">
+                        <p className="text-[var(--text-2)] mt-4 pt-4 border-t border-[var(--line)]">
                           {faq.a}
                         </p>
                       </motion.div>
@@ -117,7 +117,7 @@ export default function FAQ() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Still have questions?</h2>
-          <p className="text-muted-foreground">
+          <p className="text-[var(--text-2)]">
             Feel free to contact us or visit our GitHub discussions for more help.
           </p>
         </motion.div>

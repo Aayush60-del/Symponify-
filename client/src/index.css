@@ -40,6 +40,21 @@
   --text-5xl: clamp(2.5rem, 6vw, 3.5rem);
 }
 
+.dark {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --surface-2: #2a2a2a;
+  --surface-3: #333333;
+  --text: #e0e0e0;
+  --text-2: #a0a0a0;
+  --text-3: #707070;
+  --accent: #ff5c35;
+  --accent-2: #f0a500;
+  --accent-soft: rgba(255, 92, 53, 0.15);
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -250,7 +265,7 @@ textarea {
 }
 
 .player-progress::-webkit-slider-runnable-track {
-  height: 6px;
+  height: 12px;
   background: transparent;
   border-radius: 999px;
 }
@@ -258,12 +273,12 @@ textarea {
 .player-progress::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
-  margin-top: -4px;
+  width: 18px;
+  height: 18px;
+  margin-top: -3px;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid var(--accent);
+  border: 3px solid var(--accent);
   box-shadow: 0 4px 12px rgba(255, 92, 53, 0.28);
   transition: transform 0.15s ease;
 }
@@ -273,23 +288,23 @@ textarea {
 }
 
 .player-progress::-moz-range-track {
-  height: 6px;
+  height: 12px;
   background: var(--surface-3);
   border-radius: 999px;
 }
 
 .player-progress::-moz-range-progress {
-  height: 6px;
+  height: 12px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   border-radius: 999px;
 }
 
 .player-progress::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: #fff;
-  border: 2px solid var(--accent);
+  border: 3px solid var(--accent);
   box-shadow: 0 4px 12px rgba(255, 92, 53, 0.28);
 }
 

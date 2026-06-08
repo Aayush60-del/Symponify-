@@ -56,7 +56,7 @@ export default function ApiDocs() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
@@ -66,7 +66,7 @@ export default function ApiDocs() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">API Documentation</h1>
-          <p className="text-xl text-muted-foreground">Build with Symponify</p>
+          <p className="text-xl text-[var(--text-2)]">Build with Symponify</p>
         </motion.div>
 
         <motion.div
@@ -82,7 +82,7 @@ export default function ApiDocs() {
         <motion.div className="space-y-4" variants={{ animate: { transition: { staggerChildren: 0.05 } } }}>
           {endpoints.map((endpoint, idx) => (
             <motion.div key={idx} variants={prefersReducedMotion ? {} : listItemVariants}>
-              <Card className="bg-white/5 border-white/10">
+              <Card className="bg-[var(--surface-2)] border-[var(--line)]">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -106,7 +106,7 @@ export default function ApiDocs() {
           className="mt-16 p-8 rounded-2xl bg-gradient-to-r from-accent/20 to-accent/5 border border-accent/20"
         >
           <h2 className="text-2xl font-bold mb-4">Full Documentation</h2>
-          <p className="text-muted-foreground mb-4">
+          <p className="text-[var(--text-2)] mb-4">
             For complete API documentation, authentication details, and code examples:
           </p>
           <a href="https://github.com/symponify/docs" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">

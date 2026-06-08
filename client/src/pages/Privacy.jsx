@@ -12,7 +12,7 @@ export default function Privacy() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="min-h-screen bg-gradient-to-b from-background to-black pt-32 pb-20 px-4"
+      className="min-h-screen pt-32 pb-20 px-4" style={{ background: 'var(--bg)', color: 'var(--text)' }}
     >
       <div className="max-w-4xl mx-auto">
         <motion.div
@@ -22,7 +22,7 @@ export default function Privacy() {
           className="mb-12"
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-2">Privacy Policy</h1>
-          <p className="text-muted-foreground">Last updated: June 2026</p>
+          <p className="text-[var(--text-2)]">Last updated: June 2026</p>
         </motion.div>
 
         <motion.div
@@ -31,11 +31,11 @@ export default function Privacy() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="prose prose-invert max-w-none space-y-6"
         >
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>1. Information We Collect</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>We collect information you provide directly, such as:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Email address and password for account creation</li>
@@ -45,11 +45,11 @@ export default function Privacy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>2. How We Use Your Information</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>We use your information to:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Provide and improve our service</li>
@@ -60,21 +60,21 @@ export default function Privacy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>3. Data Security</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-[var(--text-2)]">
               We implement industry-standard security measures to protect your data. Passwords are encrypted using bcrypt, 
               and all communications use HTTPS. However, no system is 100% secure.
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>4. Third-Party Services</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>We use the following third-party services:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>MongoDB Atlas for data storage</li>
@@ -84,11 +84,11 @@ export default function Privacy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>5. Your Rights</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-muted-foreground">
+            <CardContent className="space-y-3 text-[var(--text-2)]">
               <p>You have the right to:</p>
               <ul className="list-disc list-inside space-y-2">
                 <li>Access your personal data</li>
@@ -99,11 +99,11 @@ export default function Privacy() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/5 border-white/10">
+          <Card className="bg-[var(--surface-2)] border-[var(--line)]">
             <CardHeader>
               <CardTitle>6. Contact Us</CardTitle>
             </CardHeader>
-            <CardContent className="text-muted-foreground">
+            <CardContent className="text-[var(--text-2)]">
               If you have questions about this policy, please contact us at privacy@symponify.com
             </CardContent>
           </Card>

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { usePlayer } from '../context/PlayerContext'
 import useViewport from '../hooks/useViewport'
@@ -10,6 +11,7 @@ const Icon = ({ name, size = 18, style: extraStyle, fill = false }) => (
 )
 
 export default function SongRow({ song, index, onPlay }) {
+  const navigate = useNavigate()
   const { currentTrack, isLiked, isPlaying, playSong, toggleLike } = usePlayer()
   const { isXs, isMobile, isTabletOrBelow } = useViewport()
   const prefersReducedMotion = useReducedMotion()
@@ -18,7 +20,7 @@ export default function SongRow({ song, index, onPlay }) {
   const rowStyle = {
     ...styles.row,
     background: active ? 'rgba(255, 92, 53, 0.08)' : 'rgba(255,255,255,0.74)',
-    gridTemplateColumns: isMobile ? 'auto minmax(0, 1fr) auto' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px' : styles.row.gridTemplateColumns,
+    gridTemplateColumns: isMobile ? 'auto minmax(0, 1fr) auto' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px 40px' : styles.row.gridTemplateColumns,
     gridTemplateRows: isMobile ? 'auto auto' : 'auto',
     gap: isMobile ? '10px 12px' : styles.row.gap,
     alignItems: isMobile ? 'flex-start' : styles.row.alignItems,
@@ -60,7 +62,21 @@ export default function SongRow({ song, index, onPlay }) {
       </div>
       <motion.button
         type="button"
-        style={{ ...styles.likeButton, color: liked ? '#c9184a' : 'var(--text-3)', gridColumn: isMobile ? '3 / 4' : 'auto', gridRow: isMobile ? '1 / 2' : 'auto' }}
+        style={{ ...styles.iconButton, color: 'var(--text-3)', gridColumn: isMobile ? '3 / 4' : 'auto', gridRow: isMobile ? '2 / 3' : 'auto', justifySelf: isMobile ? 'end' : 'auto' }}
+        aria-label={`View Lyrics for ${song.title}`}
+        whileHover={!prefersReducedMotion ? { scale: 1.15, color: 'var(--accent)' } : undefined}
+        whileTap={!prefersReducedMotion ? { scale: 0.92 } : undefined}
+        onClick={(event) => {
+          event.stopPropagation()
+          if (!active) playSong(song)
+          navigate('/home/lyrics')
+        }}
+      >
+        <Icon name="headphones" size={20} />
+      </motion.button>
+      <motion.button
+        type="button"
+        style={{ ...styles.iconButton, color: liked ? '#c9184a' : 'var(--text-3)', gridColumn: isMobile ? '3 / 4' : 'auto', gridRow: isMobile ? '1 / 2' : 'auto', justifySelf: isMobile ? 'end' : 'auto' }}
         aria-label={`Like ${song.title}`}
         whileHover={!prefersReducedMotion ? { scale: 1.15 } : undefined}
         whileTap={!prefersReducedMotion ? { scale: 0.92 } : undefined}
@@ -78,7 +94,7 @@ export default function SongRow({ song, index, onPlay }) {
 const styles = {
   row: {
     display: 'grid',
-    gridTemplateColumns: '40px 52px minmax(0, 1fr) 90px 40px',
+    gridTemplateColumns: '40px 52px minmax(0, 1fr) 90px 40px 40px',
     alignItems: 'center',
     gap: '14px',
     padding: '12px 14px',
@@ -134,7 +150,7 @@ const styles = {
     color: 'var(--text-2)',
     minWidth: 0,
   },
-  likeButton: {
+  iconButton: {
     width: '36px',
     height: '36px',
     borderRadius: '50%',

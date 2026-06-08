@@ -8,6 +8,7 @@ import LikedSongs from './pages/LikedSongs'
 import ManageSongs from './pages/ManageSongs'
 import Login from './pages/Login'
 import Search from './pages/Search'
+import Lyrics from './pages/Lyrics'
 import LanApp from './pages/LanApp'
 import Features from './pages/Features'
 import Pricing from './pages/Pricing'
@@ -92,6 +93,7 @@ function App() {
           <Route path="liked" element={<LikedSongs />} />
           <Route path="search" element={<Search />} />
           <Route path="library" element={<Library />} />
+          <Route path="lyrics" element={<Lyrics />} />
         </Route>
       ) : null}
 

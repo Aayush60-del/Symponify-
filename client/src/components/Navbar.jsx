@@ -172,7 +172,20 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
   const location = useLocation()
   const [showNotifications, setShowNotifications] = useState(false)
   const [searchValue, setSearchValue] = useState('')
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' || document.documentElement.classList.contains('dark')
+  })
   const { isXs, isMobile, isTabletOrBelow } = useViewport()
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }, [isDark])
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
@@ -250,6 +263,9 @@ export default function Navbar({ showMenuButton = false, onMenuToggle }) {
           </div>
           <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Run search" onClick={submitSearch}>
             <Icon name="search" size={20} />
+          </button>
+          <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Toggle dark mode" onClick={() => setIsDark(!isDark)}>
+            <Icon name={isDark ? 'light_mode' : 'dark_mode'} size={20} />
           </button>
           <button type="button" style={{ ...styles.iconBtn, width: isXs ? '42px' : styles.iconBtn.width, height: isXs ? '42px' : styles.iconBtn.height }} aria-label="Notifications" onClick={() => setShowNotifications(true)}>
             <Icon name="notifications" size={20} />
