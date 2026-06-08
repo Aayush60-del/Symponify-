@@ -30,19 +30,19 @@ const colors = [
 
 const styles = {
   page: {
-    padding: '28px',
+    padding: 'clamp(0.75rem, 2.5vw, 1.75rem)',
     overflowY: 'auto',
     height: '100%',
   },
   hero: {
     marginBottom: '22px',
-    padding: '26px 28px',
+    padding: 'clamp(1rem, 3vw, 1.75rem)',
     borderRadius: '30px',
     background: 'linear-gradient(135deg, rgba(255,92,53,0.14), rgba(240,165,0,0.22))',
     border: '1px solid rgba(255,92,53,0.12)',
   },
   eyebrow: {
-    fontSize: '12px',
+    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: 'var(--text-3)',
@@ -51,13 +51,14 @@ const styles = {
   },
   title: {
     fontFamily: 'var(--serif)',
-    fontSize: '38px',
+    fontSize: 'clamp(1.875rem, 4vw, 2.375rem)',
     marginBottom: '10px',
   },
   copy: {
     color: 'var(--text-2)',
     lineHeight: 1.6,
     maxWidth: '60ch',
+    fontSize: 'clamp(0.875rem, 1.2vw, 0.95rem)',
   },
   heroMeta: {
     display: 'flex',
@@ -75,16 +76,18 @@ const styles = {
     color: 'var(--text-2)',
   },
   card: {
+    width: '100%',
     maxWidth: '860px',
     background: 'rgba(255,255,255,0.82)',
     backdropFilter: 'blur(10px)',
     border: '1px solid var(--line)',
     borderRadius: '30px',
-    padding: '28px',
+    padding: 'clamp(1rem, 3vw, 1.75rem)',
     boxShadow: 'var(--shadow)',
+    marginInline: 'auto',
   },
   heading: {
-    fontSize: '22px',
+    fontSize: 'clamp(1.125rem, 2.5vw, 1.375rem)',
     fontWeight: 800,
     marginBottom: '22px',
   },
@@ -97,7 +100,7 @@ const styles = {
   },
   uploadRow: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
     gap: '16px',
     marginBottom: '24px',
   },
@@ -110,7 +113,7 @@ const styles = {
   uploadBox: {
     border: '2px dashed #ddd',
     borderRadius: '18px',
-    padding: '24px',
+    padding: 'clamp(1rem, 2.5vw, 1.5rem)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -173,7 +176,7 @@ const styles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
     gap: '16px',
     marginBottom: '16px',
   },
@@ -182,19 +185,21 @@ const styles = {
   },
   label: {
     display: 'block',
-    fontSize: '12px',
+    fontSize: 'clamp(0.75rem, 1.2vw, 0.875rem)',
     fontWeight: 700,
     color: 'var(--text-2)',
     marginBottom: '8px',
   },
   input: {
     width: '100%',
-    padding: '13px 14px',
+    padding: 'clamp(0.75rem, 1.5vw, 0.875rem)',
     background: 'var(--surface-2)',
     border: '1px solid transparent',
     borderRadius: '14px',
     color: 'var(--text)',
     outline: 'none',
+    fontSize: '1rem',
+    minHeight: '44px',
   },
   emojiRow: {
     display: 'flex',
@@ -251,7 +256,7 @@ const styles = {
   },
   actions: {
     display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 180px)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
     gap: '12px',
     marginTop: '10px',
   },

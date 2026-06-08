@@ -35,7 +35,7 @@ const styles = {
     gap: '4px',
   },
   eyebrow: {
-    fontSize: '12px',
+    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: 'var(--text-3)',
@@ -43,7 +43,7 @@ const styles = {
   },
   title: {
     fontFamily: 'var(--serif)',
-    fontSize: '30px',
+    fontSize: 'clamp(1.25rem, 3.5vw, 1.875rem)',
     lineHeight: 1,
   },
   right: {
@@ -53,7 +53,7 @@ const styles = {
     position: 'relative',
   },
   search: {
-    minWidth: '280px',
+    minWidth: 0,
     display: 'flex',
     alignItems: 'center',
     gap: '10px',

@@ -32,7 +32,7 @@ export default function HeroSection() {
   const springScale = useSpring(scale, { stiffness: 60, damping: 20 })
 
   return (
-    <section ref={ref} className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-20 px-4 overflow-hidden">
+    <section ref={ref} className="relative flex flex-col items-center justify-center min-h-screen px-4 pb-20 overflow-hidden pt-28">
       {/* Background zoom ring */}
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
@@ -60,7 +60,7 @@ export default function HeroSection() {
 
       <motion.div
         style={{ scale: springScale, opacity }}
-        className="relative w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+        className="relative grid items-center w-full max-w-6xl grid-cols-1 gap-16 mx-auto lg:grid-cols-2"
       >
         {/* Left: copy */}
         <div className="flex flex-col items-start">
@@ -122,7 +122,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.45, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-lg mb-8 max-w-md leading-relaxed"
+            className="max-w-md mb-8 text-lg leading-relaxed"
             style={{ color: 'var(--text-2)' }}
           >
             Symponify is a streaming platform that brings your music library to life — with a beautiful player, smart search, and a curated listening experience.
@@ -138,7 +138,7 @@ export default function HeroSection() {
               <Button
                 onClick={() => navigate('/login')}
                 size="lg"
-                className="rounded-full px-8 text-white font-bold text-base h-12"
+                className="h-12 px-8 text-base font-bold text-white rounded-full"
                 style={{ background: 'linear-gradient(135deg, var(--accent), #e04a25)', boxShadow: '0 8px 24px rgba(255,92,53,0.35)', border: 'none' }}
               >
                 Get started free →
@@ -148,7 +148,7 @@ export default function HeroSection() {
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full px-8 font-semibold text-base h-12 cursor-pointer"
+                className="h-12 px-8 text-base font-semibold rounded-full cursor-pointer"
                 onClick={() => {
                   localStorage.setItem('guestAccess', 'true')
                   window.dispatchEvent(new Event('authchange'))
@@ -194,9 +194,9 @@ export default function HeroSection() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
         style={{ opacity }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        className="absolute flex flex-col items-center gap-2 -translate-x-1/2 bottom-8 left-1/2"
       >
-        <span className="text-xs font-mono tracking-widest uppercase" style={{ color: 'var(--text-3)' }}>Scroll</span>
+        <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--text-3)' }}>Scroll</span>
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
@@ -242,7 +242,7 @@ function AvatarStack() {
   return (
     <div className="flex -space-x-2">
       {colors.map((c, i) => (
-        <div key={i} className="w-8 h-8 rounded-full border-2 border-white"
+        <div key={i} className="w-8 h-8 border-2 border-white rounded-full"
           style={{ background: `radial-gradient(circle at 30% 30%, ${c}cc, ${c})`, zIndex: colors.length - i }} />
       ))}
     </div>

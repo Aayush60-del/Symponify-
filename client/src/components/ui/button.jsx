@@ -11,10 +11,10 @@ const buttonVariants = {
     link: 'text-accent underline-offset-4 hover:underline',
   },
   sizes: {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg h-12',
-    icon: 'h-10 w-10',
+    sm: 'px-3 py-1.5 text-sm min-h-9',
+    md: 'px-4 py-2.5 text-base min-h-11',
+    lg: 'px-6 py-3 text-lg h-12 min-h-12',
+    icon: 'h-11 w-11 min-h-11 min-w-11',
   },
 }
 

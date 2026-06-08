@@ -58,7 +58,8 @@ const styles = {
     color: 'var(--text-3)',
     background: 'transparent',
     cursor: 'pointer',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
   },
   featureGrid: {
     display: 'grid',

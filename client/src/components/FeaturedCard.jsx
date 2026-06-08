@@ -45,7 +45,7 @@ export default function FeaturedCard({ item, onAction }) {
           </span>
         ) : null}
         <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : isWide ? '40px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
-        <p style={{ maxWidth: '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0 }}>
+        <p style={{ maxWidth: isMobile ? '100%' : '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0, overflowWrap: 'break-word' }}>
           {item.description}
         </p>
       </button>
@@ -71,7 +71,7 @@ export default function FeaturedCard({ item, onAction }) {
         </span>
       ) : null}
       <h2 style={{ fontSize: item.large ? (isMobile ? '28px' : isWide ? '40px' : '36px') : isMobile ? '18px' : '20px', marginBottom: '8px' }}>{item.title}</h2>
-      <p style={{ maxWidth: '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0 }}>
+      <p style={{ maxWidth: isMobile ? '100%' : '32ch', color: 'rgba(255,255,255,0.72)', marginBottom: item.large ? '18px' : 0, overflowWrap: 'break-word' }}>
         {item.description}
       </p>
       {item.large ? (

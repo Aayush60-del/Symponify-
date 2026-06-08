@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Navbar from './Navbar'
 import PlayerBar from './PlayerBar'
@@ -10,6 +10,7 @@ import { useReducedMotion } from '../lib/animation-utils'
 
 export default function MainLayout() {
   const { isCompact, isTabletOrBelow, isWide } = useViewport()
+  const location = useLocation()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 

@@ -30,6 +30,7 @@ const styles = {
     alignItems: 'center',
     gap: '14px',
     minWidth: 0,
+    flexWrap: 'wrap',
   },
   cover: {
     width: '58px',
@@ -73,6 +74,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     gap: '10px',
+    minWidth: 0,
+    width: '100%',
   },
   controls: {
     display: 'flex',
@@ -118,6 +121,7 @@ const styles = {
   },
   volume: {
     width: '110px',
+    minWidth: 0,
     accentColor: 'var(--text)',
   },
 }
@@ -197,6 +201,7 @@ export default function PlayerBar() {
     center: {
       ...styles.center,
       alignItems: 'stretch',
+      width: '100%',
     },
     controls: {
       ...styles.controls,
@@ -217,6 +222,7 @@ export default function PlayerBar() {
       justifyContent: isCompact ? 'space-between' : styles.right.justifyContent,
       width: isCompact ? '100%' : 'auto',
       flexWrap: isMobile ? 'wrap' : 'nowrap',
+      minWidth: 0,
     },
     leftMeta: {
       minWidth: 0,

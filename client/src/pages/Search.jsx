@@ -36,7 +36,7 @@ const styles = {
     border: 'none',
     outline: 'none',
     background: 'transparent',
-    fontSize: '24px',
+    fontSize: 'clamp(1.25rem, 3.5vw, 1.5rem)',
     fontWeight: 700,
   },
   pillRow: {
@@ -77,7 +77,7 @@ const styles = {
     cursor: 'pointer',
   },
   sectionTitle: {
-    fontSize: '20px',
+    fontSize: 'clamp(1.125rem, 2.5vw, 1.25rem)',
     fontWeight: 800,
     marginBottom: '14px',
   },

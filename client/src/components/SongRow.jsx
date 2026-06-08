@@ -15,11 +15,12 @@ export default function SongRow({ song, index, onPlay }) {
   const rowStyle = {
     ...styles.row,
     background: active ? 'rgba(255, 92, 53, 0.08)' : 'rgba(255,255,255,0.74)',
-    gridTemplateColumns: isMobile ? '48px minmax(0, 1fr) 40px' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px' : styles.row.gridTemplateColumns,
+    gridTemplateColumns: isMobile ? 'auto minmax(0, 1fr) auto' : isTabletOrBelow ? '32px 52px minmax(0, 1fr) 72px 40px' : styles.row.gridTemplateColumns,
     gridTemplateRows: isMobile ? 'auto auto' : 'auto',
     gap: isMobile ? '10px 12px' : styles.row.gap,
-    alignItems: isMobile ? 'start' : styles.row.alignItems,
+    alignItems: isMobile ? 'flex-start' : styles.row.alignItems,
     padding: isXs ? '10px' : isMobile ? '12px' : styles.row.padding,
+    minWidth: 0,
   }
 
   const itemVariants = prefersReducedMotion
@@ -119,14 +120,16 @@ const styles = {
     fontSize: '12px',
     color: 'var(--text-3)',
     marginTop: '4px',
-    whiteSpace: 'nowrap',
+    whiteSpace: 'normal',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    wordBreak: 'break-word',
   },
   meta: {
     justifySelf: 'end',
     fontSize: '12px',
     color: 'var(--text-2)',
+    minWidth: 0,
   },
   likeButton: {
     width: '36px',

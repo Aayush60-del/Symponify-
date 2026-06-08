@@ -68,8 +68,8 @@ export default function PlayerMockup() {
 
         {/* Song info overlay */}
         <div className="absolute inset-0 flex flex-col justify-end p-6" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45), transparent)' }}>
-          <span className="text-white/60 text-xs font-mono uppercase tracking-wider mb-1">{song.album}</span>
-          <h3 className="text-white font-bold text-xl leading-tight">{song.title}</h3>
+          <span className="mb-1 font-mono text-xs tracking-wider uppercase text-white/60">{song.album}</span>
+          <h3 className="text-xl font-bold leading-tight text-white">{song.title}</h3>
           <p className="text-white/75 text-sm mt-0.5">{song.artist}</p>
         </div>
       </div>
@@ -87,11 +87,11 @@ export default function PlayerMockup() {
             {formatTime((progress / 100) * 222)}
           </span>
           <div
-            className="relative flex-1 h-1 rounded-full overflow-hidden cursor-pointer"
+            className="relative flex-1 h-1 overflow-hidden rounded-full cursor-pointer"
             style={{ background: 'var(--surface-3)' }}
           >
             <motion.div
-              className="absolute left-0 top-0 h-full rounded-full"
+              className="absolute top-0 left-0 h-full rounded-full"
               style={{ background: 'linear-gradient(90deg, var(--accent), var(--accent-2))', width: `${progress}%` }}
               transition={{ duration: 0 }}
             />
@@ -103,31 +103,31 @@ export default function PlayerMockup() {
 
         {/* Buttons */}
         <div className="flex items-center justify-between">
-          <button className="p-2 rounded-full hover:bg-black/5 transition-colors" onClick={prev} aria-label="Previous">
+          <button className="p-2 transition-colors rounded-full hover:bg-black/5" onClick={prev} aria-label="Previous">
             <SkipBackIcon />
           </button>
 
           <motion.button
             whileTap={{ scale: 0.92 }}
             onClick={() => setPlaying((v) => !v)}
-            className="w-14 h-14 rounded-full flex items-center justify-center text-white"
+            className="flex items-center justify-center text-white rounded-full w-14 h-14"
             style={{ background: 'linear-gradient(135deg, var(--accent), #e04a25)', boxShadow: '0 8px 24px rgba(255,92,53,0.4)' }}
             aria-label={playing ? 'Pause' : 'Play'}
           >
             {playing ? <PauseIcon /> : <PlayIcon />}
           </motion.button>
 
-          <button className="p-2 rounded-full hover:bg-black/5 transition-colors" onClick={next} aria-label="Next">
+          <button className="p-2 transition-colors rounded-full hover:bg-black/5" onClick={next} aria-label="Next">
             <SkipForwardIcon />
           </button>
         </div>
 
         {/* Queue preview */}
-        <div className="mt-4 pt-4 flex flex-col gap-2" style={{ borderTop: '1px solid var(--line)' }}>
-          <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--text-3)' }}>Up next</p>
+        <div className="flex flex-col gap-2 pt-4 mt-4" style={{ borderTop: '1px solid var(--line)' }}>
+          <p className="mb-1 text-xs font-semibold tracking-wider uppercase" style={{ color: 'var(--text-3)' }}>Up next</p>
           {SONGS.filter((_, i) => i !== currentIdx).map((s, i) => (
             <div key={s.title} className="flex items-center gap-3 py-1">
-              <div className="w-8 h-8 rounded-xl flex-shrink-0" style={{ background: s.color }} />
+              <div className="flex-shrink-0 w-8 h-8 rounded-xl" style={{ background: s.color }} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate" style={{ color: 'var(--text)' }}>{s.title}</p>
                 <p className="text-xs truncate" style={{ color: 'var(--text-3)' }}>{s.artist}</p>

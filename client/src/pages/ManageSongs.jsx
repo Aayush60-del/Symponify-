@@ -9,19 +9,19 @@ import useViewport from '../hooks/useViewport'
 
 const styles = {
   page: {
-    padding: '28px',
+    padding: 'clamp(0.75rem, 2.5vw, 1.75rem)',
     overflowY: 'auto',
     height: '100%',
   },
   hero: {
     marginBottom: '22px',
-    padding: '26px 28px',
+    padding: 'clamp(1rem, 3vw, 1.75rem)',
     borderRadius: '30px',
     background: 'linear-gradient(135deg, rgba(15,53,84,0.12), rgba(63,136,197,0.18))',
     border: '1px solid rgba(15,53,84,0.12)',
   },
   eyebrow: {
-    fontSize: '12px',
+    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
     color: 'var(--text-3)',
@@ -30,13 +30,14 @@ const styles = {
   },
   title: {
     fontFamily: 'var(--serif)',
-    fontSize: '38px',
+    fontSize: 'clamp(1.875rem, 4vw, 2.375rem)',
     marginBottom: '10px',
   },
   copy: {
     color: 'var(--text-2)',
     lineHeight: 1.6,
     maxWidth: '60ch',
+    fontSize: 'clamp(0.875rem, 1.2vw, 0.95rem)',
   },
   msg: {
     padding: '13px 16px',
@@ -47,7 +48,7 @@ const styles = {
   },
   layout: {
     display: 'grid',
-    gridTemplateColumns: '320px minmax(0, 1fr)',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
     gap: '18px',
     alignItems: 'start',
   },
@@ -68,7 +69,7 @@ const styles = {
     boxShadow: 'var(--shadow)',
   },
   sectionTitle: {
-    fontSize: '18px',
+    fontSize: 'clamp(1.125rem, 2.5vw, 1.125rem)',
     fontWeight: 800,
     marginBottom: '14px',
   },
@@ -81,7 +82,7 @@ const styles = {
   },
   formGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: '12px',
   },
   field: {
@@ -89,13 +90,13 @@ const styles = {
     gap: '6px',
   },
   label: {
-    fontSize: '12px',
+    fontSize: 'clamp(0.75rem, 1.2vw, 0.875rem)',
     fontWeight: 700,
     color: 'var(--text-2)',
   },
   input: {
     width: '100%',
-    padding: '12px 14px',
+    padding: 'clamp(0.75rem, 1.5vw, 0.875rem)',
     borderRadius: '14px',
     background: 'var(--surface-2)',
     border: '1px solid transparent',
@@ -237,7 +238,9 @@ const styles = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 'min(420px, calc(100vw - 32px))',
+    width: 'min(460px, calc(100vw - 32px))',
+    maxHeight: 'calc(100dvh - 40px)',
+    overflowY: 'auto',
     background: 'rgba(255,255,255,0.98)',
     border: '1px solid var(--line)',
     borderRadius: '28px',
